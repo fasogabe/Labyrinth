@@ -111,10 +111,6 @@ public class Labyrinth {
 			Piece aPiece = pieces.get(randomPiece); // refactor : change name of aPiece maybe?
 			int randomSpin = rand.nextInt(4);
 			aPiece.orientation = randomSpin;
-			for(int i=0; i<randomSpin; i++){
-                                
-				aPiece.rotateRight(); // changed from rotateLeft() to rotateRight because GUI considers increase in rotation to be clockwise
-			}
 			for(int i=0;i<7;i++){
 				for(int j=0;j<7;j++){
 					if(board[i][j]==null){
