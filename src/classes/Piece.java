@@ -30,9 +30,10 @@ public class Piece extends Actor{
         this.type = type;
         spot[0] = x;
         spot[1] = y;
-        setPaths(this);
+        setPaths();
     }
 
+    
     public boolean isitGlued() {
         if (spot[0] == -1) {
             return false;
@@ -61,14 +62,21 @@ public class Piece extends Actor{
                 paths[3] = temp;
             }
            }
-        
+        if (!isitGlued()) {
+            if (orientation == 0) {
+                orientation = 3;
+            } else {
+                orientation--;
+            }
 
-        if (orientation==3){
-            orientation=0;
         }
-        else{
-            orientation++;
-        }
+
+//        if (orientation==3){
+//            orientation=0;
+//        }
+//        else{
+//            orientation++;
+//        }
         
        //GUI.rotateLeft(spot,orientation); 
     }
@@ -87,32 +95,32 @@ public class Piece extends Actor{
            orientation++;
            orientation%=4;
        }
-        }
+    }
     
-    public final void setPaths(Piece piece){
-        if ("I".equals(piece.type)){
+    public final void setPaths(){
+        if ("I".equals(this.type)){
             paths[0]=true;
             paths[1]=false;
             paths[2]=true;
             paths[3]=false;
         }
-        else if ("L".equals(piece.type)){
+        else if ("L".equals(this.type)){
             paths[0]=true;
             paths[1]=true;
             paths[2]=false;
             paths[3]=false;
             
         }
-        else if ("T".equals(piece.type)){
+        else if ("T".equals(this.type)){
             paths[0]=true;
             paths[1]=true;
             paths[2]=true;
             paths[3]=false;
             
         }
-        int rotations = piece.orientation;
+        int rotations = this.orientation;
         for (int i=0;i<rotations;i++){ // doesn't rotate if orientation is 0 otherwise makes paths match based on 
-            piece.rotateRight(); 
+            rotateRight(); 
             
         }
                 

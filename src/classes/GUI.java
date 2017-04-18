@@ -65,9 +65,9 @@ public class GUI extends GameGrid implements GGMouseListener {
         setNbVertCells(7);
         setGridColor(java.awt.Color.white);
         addMouseListener(this, GGMouse.lPress);
-        GUI.spareMap = createTileMap(1,1,62,62);
-        GUI.spareMap.setPosition(new Point(500,500));
-        
+//        GUI.spareMap = createTileMap(1,1,62,62);
+//        GUI.spareMap.setPosition(new Point(500,500));
+//        
         super.setTitle("Labyrinth");
 
         show();
@@ -84,42 +84,42 @@ public class GUI extends GameGrid implements GGMouseListener {
         show();
     }
 
-    void rotateLeft(Piece piece) { 
-        int x = piece.spot[0];
-        int y = piece.spot[1];
-        String imageName = piece.type+"-"+piece.orientation+".png";
-        
-//        tileMap.setImage(imageName, new Location(x,y));
-       
-    }
+//    void rotateLeft(Piece piece) { 
+//        int x = piece.spot[0];
+//        int y = piece.spot[1];
+//        String imageName = piece.type+"-"+piece.orientation+".png";
+//        
+////        tileMap.setImage(imageName, new Location(x,y));
+//       
+//    }
+//
+//    void rotateRight( Piece piece) {
+//        int x = piece.spot[0];
+//        int y = piece.spot[1];
+//        String imageName = piece.type+"-"+piece.orientation+".png";
+//        
+////        tileMap.setImage(imageName, new Location(x,y));
+//        
+//        
+//    }
 
-    void rotateRight( Piece piece) {
-        int x = piece.spot[0];
-        int y = piece.spot[1];
-        String imageName = piece.type+"-"+piece.orientation+".png";
-        
-//        tileMap.setImage(imageName, new Location(x,y));
-        
-        
-    }
-
-    public String getPlayer1Name() {
-        //text box input
-        return "ram";
-    }
-
-    public boolean whoToPlay() {
-        //maybe radio buttons here?
-
-        //if user chooses to play a cp return true
-        return true;
-    }
-    //only called when whoToPlay() returns false
-
-    public String getPlayer2Name() {
-        //text box input
-        return "sean";
-    }
+//    public String getPlayer1Name() {
+//        //text box input
+//        return "ram";
+//    }
+//
+//    public boolean whoToPlay() {
+//        //maybe radio buttons here?
+//
+//        //if user chooses to play a cp return true
+//        return true;
+//    }
+//    //only called when whoToPlay() returns false
+//
+//    public String getPlayer2Name() {
+//        //text box input
+//        return "sean";
+//    }
     //click on one of the orange triangles around the board to insert piece here
     //label them based on the closest board spot to the triangle
 
@@ -182,7 +182,7 @@ public class GUI extends GameGrid implements GGMouseListener {
                 String type = piece.type;
                 int orientation = piece.orientation;    
                 String treasure = piece.treasure;
-                String imageName = "sprites/"+type+"-"+orientation+".png";
+//                String imageName = "sprites/"+type+"-"+orientation+".png";
                 Piece thisPiece = new Piece(type, orientation, treasure, j, 6-i);
                 this.addActor(thisPiece, new Location (j,6-i));
 //                tileMap.setImage(imageName, j, 6-i );//because the kind people of Czech Republic made origin top left instead of bottom left

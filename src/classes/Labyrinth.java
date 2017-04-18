@@ -129,18 +129,20 @@ public class Labyrinth {
 		}
                 //gui.displayBoard(board);
                 
+                //the last remaining piece is the spare
+		spare = pieces.get(0);
+		pieces.remove(spare);
+	
+                
                 // Invoke EventQueue
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        new mainGUI(board).setVisible(true);
+                        new mainGUI(board, spare).setVisible(true);
                         
                     }
                 });
                 //gui.initComponents(board);
-		//the last remaining piece is the spare
-		spare = pieces.get(0);
-		pieces.remove(spare);
-	
+		
                 
         }
 	private void initializeDeck(){
@@ -182,7 +184,7 @@ public class Labyrinth {
 	}	
 	private void initializePlayers(){
 		//get user input from a gui that pops up at the start maybe?
-		String player1Name = gui.gg.getPlayer1Name();
+		String player1Name = gui.getPlayer1Name();
 		ArrayList<String> halfDeck = new ArrayList(); 
 		for(int i=0;i<deck.size()/2;i++){
 			halfDeck.add(deck.get(2*i));
@@ -192,12 +194,12 @@ public class Labyrinth {
 		}
 		player1 = new Player(player1Name,"blue",0,6,halfDeck);
 		//user input to say, "do you want to play a cp or 1V1
-		playCP = gui.gg.whoToPlay();
+		playCP = gui.whoToPlay();
 		if(playCP == true){
 			player2 = new Player("CP","green",6,0,deck);
 		}
 		else{
-			String player2Name = gui.gg.getPlayer2Name();
+			String player2Name = gui.getPlayer2Name();
 			player2 = new Player(player2Name,"green",6,0,deck);
 		}
 	}
@@ -425,6 +427,8 @@ public class Labyrinth {
 			Player player = getWhoseTurn();
                         
                         System.out.println("Spare= " +spare.type+"-"+spare.orientation);
+                        
+                        
                         
 			//get user input on where to put in their spare piece
 			int[] location = gui.gg.getInsertLocation();
