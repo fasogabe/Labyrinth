@@ -34,6 +34,15 @@ public class Labyrinth {
 		this.initializePlayers();
 		this.playGame();
         }
+	//only used for testing so the board can be manipulated for testing easily (i.e. all I pieces, T pieces etc) 
+	public Labyrinth(boolean testing){
+                //gui = new GUI();
+//                this.initializePieces();
+//                this.initializeBoard();
+//		this.initializeDeck();
+//		this.initializePlayers();
+//		this.playGame();
+        }
 	
 //----------------- SET UP THE GAME --------------------------------------------------	
 	
@@ -281,6 +290,23 @@ public class Labyrinth {
 		//If there's nowhere left to check and you haven't made it to the {x2,y2}
 		return false;
 	}
+	public static void testPathExists(int startX, int startY, int endX, int endY){
+            
+            Labyrinth labyrinthTest = new Labyrinth();
+            
+              for (int i =0; i<7; i++){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are
+                         // true so a path always exists for every combination
+                        labyrinthTest.board[i][j]=new Piece("X",0,"A",j,i);
+                    }
+        }
+		
+                ArrayList<int[]> visited = new ArrayList();
+                System.out.println(labyrinthTest.pathExists(visited,startX,startY,endX,endY));
+	}
+	
+	
 	private boolean checkForTreasure(Player player){
 		//checks if the piece the player moved to has the treasure they need
 		int[] position = player.getLocation();
@@ -477,6 +503,8 @@ public class Labyrinth {
 //--------------------------- MAIN METHOD ----------------------------------------------------
 	
 	public static void main(String[] args) {
+		
+		//testPathExists(0,2,4,0); Function to test path exists 
                 
 		labyrinth = new Labyrinth();
 		                
