@@ -110,6 +110,12 @@ public class Piece extends Actor{
             paths[3]=false;
             
         }
+        else if ("X".equals(this.type)){
+            paths[0]=true;
+            paths[1]=true;
+            paths[2]=true;
+            paths[3]=true;
+        }
         int rotations = piece.orientation;
         for (int i=0;i<rotations;i++){ // doesn't rotate if orientation is 0 otherwise makes paths match based on 
             piece.rotateRight(); 
