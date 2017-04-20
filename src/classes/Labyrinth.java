@@ -34,6 +34,15 @@ public class Labyrinth {
 		this.initializePlayers();
 		this.playGame();
         }
+	//only used for testing so the board can be manipulated for testing easily (i.e. all I pieces, T pieces etc) 
+	public Labyrinth(boolean testing){
+                //gui = new GUI();
+//                this.initializePieces();
+//                this.initializeBoard();
+//		this.initializeDeck();
+//		this.initializePlayers();
+//		this.playGame();
+        }
 	
 //----------------- SET UP THE GAME --------------------------------------------------	
 	
@@ -111,10 +120,6 @@ public class Labyrinth {
 			Piece aPiece = pieces.get(randomPiece); // refactor : change name of aPiece maybe?
 			int randomSpin = rand.nextInt(4);
 			aPiece.orientation = randomSpin;
-			for(int i=0; i<randomSpin; i++){
-                                
-				aPiece.rotateRight(); // changed from rotateLeft() to rotateRight because GUI considers increase in rotation to be clockwise
-			}
 			for(int i=0;i<7;i++){
 				for(int j=0;j<7;j++){
 					if(board[i][j]==null){
@@ -127,12 +132,11 @@ public class Labyrinth {
 				}
 			}	
 		}
-                //gui.displayBoard(board);
+                
                 
                 //the last remaining piece is the spare
 		spare = pieces.get(0);
 		pieces.remove(spare);
-	
                 
                 // Invoke EventQueue
                 EventQueue.invokeLater(new Runnable() {
@@ -141,8 +145,9 @@ public class Labyrinth {
                         
                     }
                 });
-                //gui.initComponents(board);
+                
 		
+	
                 
         }
 	private void initializeDeck(){
@@ -287,6 +292,23 @@ public class Labyrinth {
 		//If there's nowhere left to check and you haven't made it to the {x2,y2}
 		return false;
 	}
+	public static void testPathExists(int startX, int startY, int endX, int endY){
+            
+            Labyrinth labyrinthTest = new Labyrinth();
+            
+              for (int i =0; i<7; i++){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are
+                         // true so a path always exists for every combination
+                        labyrinthTest.board[i][j]=new Piece("X",0,"A",j,i);
+                    }
+        }
+		
+                ArrayList<int[]> visited = new ArrayList();
+                System.out.println(labyrinthTest.pathExists(visited,startX,startY,endX,endY));
+	}
+	
+	
 	private boolean checkForTreasure(Player player){
 		//checks if the piece the player moved to has the treasure they need
 		int[] position = player.getLocation();
@@ -426,12 +448,12 @@ public class Labyrinth {
 			nextTurn();
 			Player player = getWhoseTurn();
                         
+                        
+                        
                         System.out.println("Spare= " +spare.type+"-"+spare.orientation);
                         
-                        
-                        
 			//get user input on where to put in their spare piece
-			int[] location = gui.gg.getInsertLocation();
+			int[] location = gui.getInsertLocation();
 //                        int[] guiLoc = gui.convertToGuiLoc(location);
 
 			insertPiece(location);
@@ -485,6 +507,8 @@ public class Labyrinth {
 //--------------------------- MAIN METHOD ----------------------------------------------------
 	
 	public static void main(String[] args) {
+		
+		//testPathExists(0,2,4,0); Function to test path exists 
                 
 		labyrinth = new Labyrinth();
 		                

@@ -1,7 +1,6 @@
 
 package classes;
 
-import apple.laf.JRSUIUtils.Images;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,61 +16,40 @@ public class SparePanel extends JPanel implements ActionListener {
     JButton rLeft;
     JButton rRight;
     JLabel l;
+    Image b;
     ImageIcon spareIcon;
-    GridBagConstraints gbc;
     
     
     public SparePanel(Piece spare) {
         
-        this.spare = spare;
-//        
-//        setLayout(new GridBagLayout());
-//        gbc = new GridBagConstraints();
+        this.spare = spare;             // set local spare Piece object
         
-        initComponents();
+        setBackground(Color.DARK_GRAY); // set background
+        
+        initComponents();               // initialize components
 
     }
     
-    
-    
     void initComponents() {
         
+        // create spare icon label
         spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
-        //spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/T-0.png");
         l = new JLabel("", spareIcon, JLabel.CENTER);
         
-//        gbc.fill = GridBagConstraints.BOTH;
-//        gbc.gridx = 0;
-//        gbc.gridy = 0;
-//        gbc.gridwidth = 3;
-//        gbc.gridheight = 3;
-        
-        
+        // Create rotate buttons
         rLeft = new JButton("Rotate Left");
         rRight = new JButton("Rotate Right");
-        
+        // set action commands
         rLeft.setActionCommand("rl");
         rRight.setActionCommand("rr");
-        
+        // add action listeners
         rLeft.addActionListener(this);
         rRight.addActionListener(this);
         
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        gbc.gridx = 0;
-//        gbc.gridy = 2;
+        // add components to pane
         add(rLeft, BorderLayout.EAST);
-        
-        
         add(l, BorderLayout.CENTER);
-        
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        gbc.gridx = 2;
-//        gbc.gridy = 2;
-        add(rRight, BorderLayout.WEST);
-        
-        
-        
-    
+        add(rRight, BorderLayout.WEST);    
     }
 
     @Override
@@ -79,36 +57,30 @@ public class SparePanel extends JPanel implements ActionListener {
         
         String Action = e.getActionCommand ();
         
-        if (Action.equals("rl")) {
+        if (Action.equals("rl")) {  // rotate left pressed 
             spare.rotateLeft();
             spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
-            l.setIcon(spareIcon);
-//            gbc.fill = GridBagConstraints.HORIZONTAL;
-//            gbc.gridx = 0;
-//            gbc.gridy = 0;
-//            gbc.gridwidth = 3;
+            l.setIcon(spareIcon);   // update spare icon
             add(l, BorderLayout.CENTER);
         }
-        if (Action.equals("rr")) {
+        if (Action.equals("rr")) { // rotate right pressed
             spare.rotateRight();
             spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
-            l.setIcon(spareIcon);
-//            gbc.fill = GridBagConstraints.HORIZONTAL;
-//            gbc.gridx = 0;
-//            gbc.gridy = 0;
-//            gbc.gridwidth = 3;
+            l.setIcon(spareIcon);   // update spare icon
             add(l, BorderLayout.CENTER);
         }
         
         
     }
     
-//    protected ImageIcon updateImageIcon(String path) {
-//        
-//    
-//        return new ImageIcon("sprites/"+spare.type+"-"+spare.orientation+".png");
-//    
-//    }
+    @Override
+    protected void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+        g.drawImage(b, 0, 0, null);
+    }
+    
+
 
 
 
