@@ -292,7 +292,7 @@ public class Labyrinth {
 	}
 	public static void testPathExists(int startX, int startY, int endX, int endY){
             
-            Labyrinth labyrinthTest = new Labyrinth();
+            Labyrinth labyrinthTest = new Labyrinth(true);
             
               for (int i =0; i<7; i++){
                     for (int j =0; j<7; j++){
@@ -504,7 +504,7 @@ public class Labyrinth {
 	
 	public static void main(String[] args) {
 		
-		//testPathExists(0,2,4,0); Function to test path exists 
+		//testPathExists(0,2,4,0); //Function to test path exists 
                 
 		labyrinth = new Labyrinth();
 		                
