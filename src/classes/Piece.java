@@ -54,40 +54,40 @@ public class Piece extends Actor{
 
     public void rotateLeft() { //Counter Clockwise
         boolean temp = paths[0];
-        for (int i = 0; i < 4; i++) {
-            if (i < 3) {
-                paths[i] = paths[i + 1];
-            } else {
-                paths[3] = temp;
-            }
-           }
-        
 
-        if (orientation==3){
-            orientation=0;
+        for (int i=0; i<3 ; i++){
+             paths[i]=paths[i+1];
         }
-        else{
-            orientation++;
-        }
-        
-       //GUI.rotateLeft(spot,orientation); 
-    }
+        paths[3]=temp;
 
-    public void rotateRight() { // Clockwise
-        boolean temp = paths[3];
-        for (int i = 0; i < 4; i++) {
-            if (i < 3) {
-                paths[i + 1] = paths[i];
-            } else {
-                paths[0] = temp;
-            }
-        }
        
        if (!isitGlued()) {
            orientation++;
            orientation%=4;
        }
+        
+        
+    }
+
+    public void rotateRight() { // Clockwise
+
+     
+        
+        boolean temp = paths[3];
+
+        for (int i=3; i>0 ; i--){
+             
+             paths[i]=paths[i-1];
+             paths[i-1]=temp;
         }
+        
+
+       
+       if (!isitGlued()) {
+           orientation++;
+           orientation%=4;
+       }
+    }
     
     public final void setPaths(Piece piece){
         if ("I".equals(piece.type)){
