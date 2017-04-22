@@ -12,8 +12,7 @@ public class Labyrinth {
 	
 	private boolean debug = true;
 	private ArrayList<Piece> pieces = new ArrayList();
-	private Piece[][] board = new Piece[
-                7][7];
+	private Piece[][] board = new Piece[7][7];
 	private Piece spare;
 	private Player player1;
 	private Player player2;
@@ -27,7 +26,6 @@ public class Labyrinth {
         static Labyrinth labyrinth;
         
         public Labyrinth(){
-                //gui = new GUI();
                 this.initializePieces();
                 this.initializeBoard();
 		this.initializeDeck();
@@ -139,12 +137,12 @@ public class Labyrinth {
 		pieces.remove(spare);
                 
                 // Invoke EventQueue
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        new mainGUI(board, spare).setVisible(true);
-                        
-                    }
-                });
+//                EventQueue.invokeLater(new Runnable() {
+//                    public void run() {
+//                        new mainGUI(,board, spare).setVisible(true);
+//                        
+//                    }
+//                });
                 
 		
 	
@@ -189,7 +187,7 @@ public class Labyrinth {
 	}	
 	private void initializePlayers(){
 		//get user input from a gui that pops up at the start maybe?
-		String player1Name = gui.getPlayer1Name();
+		String player1Name = mainGUI.getPlayer1Name();
 		ArrayList<String> halfDeck = new ArrayList(); 
 		for(int i=0;i<deck.size()/2;i++){
 			halfDeck.add(deck.get(2*i));
@@ -199,12 +197,12 @@ public class Labyrinth {
 		}
 		player1 = new Player(player1Name,"blue",0,6,halfDeck);
 		//user input to say, "do you want to play a cp or 1V1
-		playCP = gui.whoToPlay();
+		playCP = mainGUI.whoToPlay();
 		if(playCP == true){
 			player2 = new Player("CP","green",6,0,deck);
 		}
 		else{
-			String player2Name = gui.getPlayer2Name();
+			String player2Name = mainGUI.getPlayer2Name();
 			player2 = new Player(player2Name,"green",6,0,deck);
 		}
 	}
@@ -232,6 +230,9 @@ public class Labyrinth {
         public Piece getSpare(){
 		return spare;
 	}
+        public void setSpare(Piece spare) {
+                this.spare = spare;
+        }
 	
 	private void isTheGameOver(){
 		if(player1.cardsLeft == 0 || player2.cardsLeft == 0){
@@ -444,18 +445,24 @@ public class Labyrinth {
         
 	
 	private void playGame(){
+            
+
+                gui = new mainGUI(this, board, spare);
+                gui.setVisible(true);
+
+            
 		while(gameOver == false){
 			nextTurn();
 			Player player = getWhoseTurn();
-                        
                         
                         
                         System.out.println("Spare= " +spare.type+"-"+spare.orientation);
                         
 			//get user input on where to put in their spare piece
 			int[] location = gui.getInsertLocation();
-//                        int[] guiLoc = gui.convertToGuiLoc(location);
 
+//                        int[] guiLoc = gui.convertToGuiLoc(location);
+                        while (location[0] < 0) { /* wait for user to press a button */}
 			insertPiece(location);
                         
                         //check if the play shifts with the board
@@ -464,7 +471,7 @@ public class Labyrinth {
 			shiftPlayerLocation(player2,location);
 			
 			//NEED TO UPDATE THE gui HERE BECAUSE THE BOARD SHIFTED
-			gui.gg.displayBoard(board);
+			gui.updateBoard(board);
 			//get where the player wants to move and where they are
 			int hereX = player.getLocation()[0];
 			int hereY = player.getLocation()[1];

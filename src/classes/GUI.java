@@ -74,12 +74,12 @@ public class GUI extends GameGrid implements GGMouseListener {
         
     }
    
-    void addTile(String type, int orientation, String treasure, int x, int y) {
-        String imageName = type+"-"+orientation+".png";
+//    void addTile(String type, int orientation, String treasure, int x, int y) {
+//        String imageName = type+"-"+orientation+".png";
 //        tileMap.setImage(imageName, 6-x, y); // haven't tested that coordinates work
         
         
-    }
+//    }
     public void showGui(){
         show();
     }
@@ -123,15 +123,15 @@ public class GUI extends GameGrid implements GGMouseListener {
     //click on one of the orange triangles around the board to insert piece here
     //label them based on the closest board spot to the triangle
 
-    public int[] getInsertLocation() {
-        System.out.println("Where to insert piece?");
-        while (insertLoc[0] < 0){ 
-              //wait until mouse is double clicked
-              System.out.print(""); // Hacked!
-        }
-        
-        return convertToGuiLoc(insertLoc);
-    }
+//    public int[] getInsertLocation() {
+//        System.out.println("Where to insert piece?");
+//        while (insertLoc[0] < 0){ 
+//              //wait until mouse is double clicked
+//              System.out.print(""); // Hacked!
+//        }
+//        
+//        return convertToGuiLoc(insertLoc);
+//    }
     //this method will get called again if the user chooses a path that doesn't work
 
     public int[] wantToMoveHere() {
@@ -164,14 +164,6 @@ public class GUI extends GameGrid implements GGMouseListener {
         loc[1]=x;
         return loc;
     }
-    //these methods need a button that calls them
-    public void rotateSpareRight() {
-//        spare.rotateRight();
-    }
-
-    public void rotateSpareLeft() {
-//        spare.rotateLeft();
-    }
 
 
     void displayBoard(Piece[][] board) {
@@ -185,7 +177,7 @@ public class GUI extends GameGrid implements GGMouseListener {
 //                String imageName = "sprites/"+type+"-"+orientation+".png";
                 Piece thisPiece = new Piece(type, orientation, treasure, j, 6-i);
                 this.addActor(thisPiece, new Location (j,6-i));
-//                tileMap.setImage(imageName, j, 6-i );//because the kind people of Czech Republic made origin top left instead of bottom left
+
                 
             }
         }

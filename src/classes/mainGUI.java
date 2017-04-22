@@ -19,6 +19,8 @@ public class mainGUI extends JFrame implements ActionListener {
     // Initialize components
     public GUI gg;
     public SparePanel sp;
+    public CardPanel ca;
+    public Labyrinth lab;
     
     // Initialize variables
     Piece[][] board;
@@ -27,23 +29,29 @@ public class mainGUI extends JFrame implements ActionListener {
     int[] insertLoc;
     String player1;
     String player2;
+    Player currentPlayer;
     Boolean vsCP;
     
     
     
-    public mainGUI(Piece[][] board, Piece spare) {
+    public mainGUI(Labyrinth lab, Piece[][] board, Piece spare) {
         
         super("Labyrinth");
+        setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        setContentPane(new JLabel(new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/triangles/stone_background.png")));
+        setPreferredSize(new Dimension(860, 550));
+        setContentPane(new JLabel(new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/stone_background.png")));
         
         setLayout(new GridBagLayout()); // set layout manager
         
-        this.board = board;     // set initial board
-        this.spare = spare;     // set initial spare
+        this.lab = lab;         // set main class reference
+        this.currentPlayer = lab.getWhoseTurn();
         
-        getUserInfo();          // initiate user prompt
+        this.board = board;     // set initial board setup
+        this.spare = spare;     // set initial spare piece
+        
+        
+        
         initComponents();       // initiate components
     }
     
@@ -53,16 +61,18 @@ public class mainGUI extends JFrame implements ActionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         
         // Create buttons - load new triangle every 3 buttons
-        ImageIcon tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/triangles/down_triangle.png");
+        ImageIcon tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/down_triangle.png");
         // Button 1
         button = new JButton(tri); 
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("1");
         gbc.weightx = 0.5;
-        gbc.gridx = 1;
+        gbc.gridx = 2;
         gbc.gridy = 0;
+        gbc.insets = new Insets(0, 40, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 3
         button = new JButton(tri);
@@ -70,9 +80,11 @@ public class mainGUI extends JFrame implements ActionListener {
         button.setBorder(null);
         button.setActionCommand("3");
         gbc.weightx = 0.5;
-        gbc.gridx = 2;
+        gbc.gridx = 4;
         gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 5
         button = new JButton(tri);
@@ -80,18 +92,31 @@ public class mainGUI extends JFrame implements ActionListener {
         button.setBorder(null);
         button.setActionCommand("5");
         gbc.weightx = 0.5;
-        gbc.gridx = 3;
+        gbc.gridx = 6;
         gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 40);
         getContentPane().add(button, gbc);
+        
         
         // SparePanel
         sp = new SparePanel(spare);  // Create sparepanel object
-        gbc.gridheight = 3;
-        gbc.gridx = 5;
+        gbc.gridheight = 4;
+        gbc.gridx = 9;
         gbc.gridy = 0;
+        gbc.insets = new Insets(20, 20, 20, 20);
         getContentPane().add(sp, gbc);
         
-        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/triangles/right_triangle.png");
+        // CardPanel
+        ca = new CardPanel(currentPlayer);  // Create cardpanel object
+        gbc.gridheight = 4;
+        gbc.gridx = 9;
+        gbc.gridy = 5;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        getContentPane().add(ca, gbc);
+        
+
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/right_triangle.png");
         // Button 7
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
@@ -100,8 +125,10 @@ public class mainGUI extends JFrame implements ActionListener {
         gbc.gridheight = 1;
         gbc.weighty = 0.5;
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(40, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 9
         button = new JButton(tri);
@@ -110,8 +137,10 @@ public class mainGUI extends JFrame implements ActionListener {
         button.setActionCommand("9");
         gbc.weighty = 0.5;
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 11
         button = new JButton(tri);
@@ -120,18 +149,22 @@ public class mainGUI extends JFrame implements ActionListener {
         button.setActionCommand("11");
         gbc.weighty = 0.5;
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 40, 0);
         getContentPane().add(button, gbc);
+        
         
         // GameGrid panel
         gg = new GUI();         // Create gui object (the board)
-        gbc.gridwidth = 3;
-        gbc.gridheight = 3;
+        gbc.gridwidth = 7;
+        gbc.gridheight = 7;
         gbc.gridx = 1;
         gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
         getContentPane().add(gg, gbc);
         
-        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/triangles/left_triangle.png");
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/left_triangle.png");
         // Button 8
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
@@ -139,55 +172,67 @@ public class mainGUI extends JFrame implements ActionListener {
         button.setActionCommand("8");
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
-        gbc.gridx = 4;
-        gbc.gridy = 1;
+        gbc.gridx = 8;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(40, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 10
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("10");
-        gbc.gridx = 4;
-        gbc.gridy = 2;
+        gbc.gridx = 8;
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 12
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("12");
-        gbc.gridx = 4;
-        gbc.gridy = 3;
+        gbc.gridx = 8;
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 40, 0);
         getContentPane().add(button, gbc);
         
-        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/triangles/up_triangle.png");
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/up_triangle.png");
         // Button 2
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("2");
-        gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridx = 2;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 40, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 4
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("4");
-        gbc.gridx = 2;
-        gbc.gridy = 4;
+        gbc.gridx = 4;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 0, 0, 0);
         getContentPane().add(button, gbc);
+        
         
         // Button 6
         button = new JButton(tri);
         button.setPreferredSize(new Dimension(39,39));
         button.setBorder(null);
         button.setActionCommand("6");
-        gbc.gridx = 3;
-        gbc.gridy = 4;
+        gbc.gridx = 6;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 0, 0, 40);
         getContentPane().add(button, gbc);
+        
         
         // Pack components
         pack();
@@ -208,28 +253,28 @@ public class mainGUI extends JFrame implements ActionListener {
         gg.doRun();
     }
     
-    private void getUserInfo() {
-//        String s = (String)JOptionPane.showInputDialogue(this,
-//                                                        "Please enter your name:",
-//                                                        "Customized Dialogue",
-//                                                        JOptionPane.PLAIN_MESSAGE,
-//                                                        null, "");
-    }
     
-    public boolean whoToPlay() {
+    public static boolean whoToPlay() {
         //maybe radio buttons here?
-
+        String[] options = {"Computer", "Human"};
+        int n = JOptionPane.showOptionDialog(null, "CHOOSE YOUR OPPONENT", "",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null, options, options[0]);
         //if user chooses to play a cp return true
-        return true;
+        return n == 0;
+        
     }
     
-    public String getPlayer1Name() {
+    public static String getPlayer1Name() {
         //text box input
-        return "ram";
+        String name = (String)JOptionPane.showInputDialog("Welcome to Labyrinth!\n\nEnter your name:");
+        return name;
     }
-    public String getPlayer2Name() {
+    public static String getPlayer2Name() {
         //text box input
-        return "sean";
+        String name = (String)JOptionPane.showInputDialog("Human #2, enter your name:");
+        return name;
     }
     
     public int[] convertToGuiLoc(int[] loc){
@@ -246,14 +291,18 @@ public class mainGUI extends JFrame implements ActionListener {
     
     public int[] getInsertLocation() {
         System.out.println("Where to insert piece?");
-        while (insertLoc[0] < 0){ /* Wait for button pressed */ }
+        if (insertLoc[0] < 0) {
+            return insertLoc;
+        } else {
+            return convertToGuiLoc(insertLoc);
+        }
         
-        return convertToGuiLoc(insertLoc);
+        
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String Action = e.getActionCommand ();
+        String Action = e.getActionCommand();
         insertLoc = new int[2];
         switch (Action) {
             case "1":
@@ -292,11 +341,8 @@ public class mainGUI extends JFrame implements ActionListener {
             case "12":
                 insertLoc[0] = 6;
                 insertLoc[1] = 5;
-            default:
-                insertLoc[0] = -1;
-                insertLoc[1] = -1;
         }
-        
+        this.spare = sp.spare;
     }
     
 

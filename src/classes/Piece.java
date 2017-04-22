@@ -30,7 +30,7 @@ public class Piece extends Actor{
         this.type = type;
         spot[0] = x;
         spot[1] = y;
-        setPaths();
+        setPaths(this);
     }
 
     
@@ -71,14 +71,6 @@ public class Piece extends Actor{
 
         }
 
-//        if (orientation==3){
-//            orientation=0;
-//        }
-//        else{
-//            orientation++;
-//        }
-        
-       //GUI.rotateLeft(spot,orientation); 
     }
 
     public void rotateRight() { // Clockwise
@@ -97,30 +89,36 @@ public class Piece extends Actor{
        }
     }
     
-    public final void setPaths(){
-        if ("I".equals(this.type)){
+    public final void setPaths(Piece piece){
+        if ("I".equals(piece.type)){
             paths[0]=true;
             paths[1]=false;
             paths[2]=true;
             paths[3]=false;
         }
-        else if ("L".equals(this.type)){
+        else if ("L".equals(piece.type)){
             paths[0]=true;
             paths[1]=true;
             paths[2]=false;
             paths[3]=false;
             
         }
-        else if ("T".equals(this.type)){
+        else if ("T".equals(piece.type)){
             paths[0]=true;
             paths[1]=true;
             paths[2]=true;
             paths[3]=false;
             
         }
-        int rotations = this.orientation;
+        else if ("X".equals(this.type)){
+            paths[0]=true;
+            paths[1]=true;
+            paths[2]=true;
+            paths[3]=true;
+        }
+        int rotations = piece.orientation;
         for (int i=0;i<rotations;i++){ // doesn't rotate if orientation is 0 otherwise makes paths match based on 
-            rotateRight(); 
+            piece.rotateRight(); 
             
         }
                 

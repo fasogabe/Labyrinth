@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
 
 /**
  *
@@ -13,11 +15,11 @@ import javax.swing.*;
 public class SparePanel extends JPanel implements ActionListener {
     
     Piece spare;
-    JButton rLeft;
-    JButton rRight;
+    JButton rLeft, rRight;
     JLabel l;
     Image b;
-    ImageIcon spareIcon;
+    ImageIcon spareIcon, rlIcon, rrIcon;
+
     
     
     public SparePanel(Piece spare) {
@@ -25,20 +27,31 @@ public class SparePanel extends JPanel implements ActionListener {
         this.spare = spare;             // set local spare Piece object
         
         setBackground(Color.DARK_GRAY); // set background
+        setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+        setPreferredSize(new Dimension(250,100));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 25, 18));
+        
+        
         
         initComponents();               // initialize components
 
     }
     
-    void initComponents() {
+    private void initComponents() {
         
         // create spare icon label
         spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
         l = new JLabel("", spareIcon, JLabel.CENTER);
+        Border border = BorderFactory.createLineBorder(Color.YELLOW);
+        l.setBorder(border);
         
         // Create rotate buttons
-        rLeft = new JButton("Rotate Left");
-        rRight = new JButton("Rotate Right");
+        rlIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/rotate_left.png");
+        rLeft = new JButton(rlIcon);
+        rLeft.setBorder(null);
+        rrIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/rotate_right.png");
+        rRight = new JButton(rrIcon);
+        rRight.setBorder(null);
         // set action commands
         rLeft.setActionCommand("rl");
         rRight.setActionCommand("rr");
@@ -47,9 +60,9 @@ public class SparePanel extends JPanel implements ActionListener {
         rRight.addActionListener(this);
         
         // add components to pane
-        add(rLeft, BorderLayout.EAST);
-        add(l, BorderLayout.CENTER);
-        add(rRight, BorderLayout.WEST);    
+        add(rLeft);
+        add(l);
+        add(rRight);    
     }
 
     @Override
