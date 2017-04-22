@@ -1,19 +1,19 @@
-package classes;
+package labyrinth;
 
 import ch.aplu.jgamegrid.Location;
-import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Labyrinth {
+
+    
 	
 //------------------ VARIABLES -------------------------------------------------------
 	
 	private boolean debug = true;
 	private ArrayList<Piece> pieces = new ArrayList();
-	private Piece[][] board = new Piece[
-                7][7];
+	private Piece[][] board = new Piece[7][7];
 	private Piece spare;
 	private Player player1;
 	private Player player2;
@@ -23,32 +23,28 @@ public class Labyrinth {
 	//playing a cp?
 	boolean playCP;
 	boolean gameOver = false;
-        private mainGUI gui;
+        private GUI gui;
         static Labyrinth labyrinth;
+        static Labyrinth labyrinthTest;
+        private int[] whereToMoveCP = new int[2];
         
         public Labyrinth(){
-                //gui = new GUI();
+                gui = new GUI();
                 this.initializePieces();
-                this.initializeBoard();
+		this.initializeBoard();
 		this.initializeDeck();
 		this.initializePlayers();
 		this.playGame();
         }
-	//only used for testing so the board can be manipulated for testing easily (i.e. all I pieces, T pieces etc) 
-	public Labyrinth(boolean testing){
-                //gui = new GUI();
-//                this.initializePieces();
-//                this.initializeBoard();
-//		this.initializeDeck();
-//		this.initializePlayers();
-//		this.playGame();
+
+                public Labyrinth(boolean testing){
+
         }
-	
 //----------------- SET UP THE GAME --------------------------------------------------	
 	
 	private void initializePieces(){
 		//start by adding all the pieces that are "glued"
-		pieces.add( new Piece("L",1,"blueStart",0,6) ); // L-1
+		pieces.add( new Piece("L",1,"null",0,6) ); // L-1
 		pieces.add( new Piece("T",1,"A",2,6) ); // T-1
 		pieces.add( new Piece("T",1,"B",4,6) ); // T-1
 		pieces.add( new Piece("L",2,"null",6,6) ); // L-2
@@ -63,7 +59,7 @@ public class Labyrinth {
 		pieces.add( new Piece("L",0,"null",0,0) );//L-0
 		pieces.add( new Piece("T",3,"K",2,0) ); //T-3
 		pieces.add( new Piece("T",3,"L",4,0) ); //T-3
-		pieces.add( new Piece("L",3,"greenStart",6,0) ); //L-3
+		pieces.add( new Piece("L",3,"null",6,0) ); //L-3
 		//now add the rest of the treasure pieces (6 L's and 6 T's)
 		pieces.add( new Piece("L",0,"M",-1,-1)); // Change first 6 to L - 0 
 		pieces.add( new Piece("L",0,"N",-1,-1));
@@ -132,16 +128,7 @@ public class Labyrinth {
 				}
 			}	
 		}
-                //gui.displayBoard(board);
-                
-                // Invoke EventQueue
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        new mainGUI(board).setVisible(true);
-                        
-                    }
-                });
-                //gui.initComponents(board);
+                gui.displayBoard(board);
 		//the last remaining piece is the spare
 		spare = pieces.get(0);
 		pieces.remove(spare);
@@ -187,7 +174,7 @@ public class Labyrinth {
 	}	
 	private void initializePlayers(){
 		//get user input from a gui that pops up at the start maybe?
-		String player1Name = gui.gg.getPlayer1Name();
+		String player1Name = gui.getPlayer1Name();
 		ArrayList<String> halfDeck = new ArrayList(); 
 		for(int i=0;i<deck.size()/2;i++){
 			halfDeck.add(deck.get(2*i));
@@ -195,17 +182,20 @@ public class Labyrinth {
 		for(int i=0;i<halfDeck.size();i++){
 			deck.remove(halfDeck.get(i));
 		}
-		player1 = new Player(player1Name,"blue",0,6,halfDeck);
+		player1 = new Player(player1Name,"blue",6,6,halfDeck);
 		//user input to say, "do you want to play a cp or 1V1
-		playCP = gui.gg.whoToPlay();
+		playCP = gui.whoToPlay();
 		if(playCP == true){
 			player2 = new Player("CP","green",6,0,deck);
+                        player2.isCP = true;
 		}
 		else{
-			String player2Name = gui.gg.getPlayer2Name();
+			String player2Name = gui.getPlayer2Name();
 			player2 = new Player(player2Name,"green",6,0,deck);
 		}
+                gui.addActor(player1, new Location(0,0));
 	}
+        
 	
 //------------------- GAME PLAY METHODS -----------------------------------------------	
 	
@@ -261,57 +251,81 @@ public class Labyrinth {
 		}
 		return false;
 	}
-	private boolean pathExists(ArrayList<int[]> visited, int x1, int y1, int x2, int y2){
+	private boolean pathExists(Boolean[][] visited, int x1, int y1, int x2, int y2){
+            //set up the visited array list and how to check it
+                Boolean[][] newVisited = visited;
+		newVisited[x1][y1]=true;
+                
+//                for(int i=0;i<7;i++){
+//                    System.out.println(Arrays.toString(newVisited[i]));
+//                }
+
 		//kill recursion and a path exists
 		if(x1==x2 && y1==y2){
 			return true;
 		}
-		//set up the visited array list and how to check it
-		int[] here = {x1,y1};
-		ArrayList newVisited = visited;
-		newVisited.add(here);
-		int[] oneN = {x1,y1+1};
-		int[] oneE = {x1+1,y1};
-		int[] oneS = {x1,y1-1};
-		int[] oneW = {x1-1,y1};
+                
 		//check for edge of board, a proper path, and if it hasn't been visited
-		if(x1<6 && canMove(x1,y1,"N") && newVisited.contains(oneN)==false){
+		if(y1<6 && canMove(x1,y1,"N") && newVisited[x1][y1+1]==false){
+                    System.out.println("hellon");
 			return pathExists(newVisited,x1,y1+1,x2,y2);
+                        
 		}
-		if(y1<6 && canMove(x1,y1,"E") && newVisited.contains(oneE)==false){
+		if(x1<6 && canMove(x1,y1,"E") && newVisited[x1+1][y1]==false){
+                    System.out.println("helloe");
 			return pathExists(newVisited,x1+1,y1,x2,y2);
 		}
-		if(x1>0 && canMove(x1,y1,"S") && newVisited.contains(oneS)==false){
+		if(y1>0 && canMove(x1,y1,"S") && newVisited[x1][y1-1]==false){
+                    System.out.println("hellos");
 			return pathExists(newVisited,x1,y1-1,x2,y2);
 		}
-		if(y1>0 && canMove(x1,y1,"W") && newVisited.contains(oneW)==false){
-			return pathExists(newVisited,x1+1,y1,x2,y2);
+		if(x1>0 && canMove(x1,y1,"W") && newVisited[x1-1][y1]==false){
+                    System.out.println("hellow");
+			return pathExists(newVisited,x1-1,y1,x2,y2);
+                        
 		}		
 		//If there's nowhere left to check and you haven't made it to the {x2,y2}
 		return false;
 	}
-	public static void testPathExists(int startX, int startY, int endX, int endY){
-            
-            Labyrinth labyrinthTest = new Labyrinth(true);
-            
-              for (int i =0; i<7; i++){
-                    for (int j =0; j<7; j++){
-                         // An x-piece is only for testing but all paths are
-                         // true so a path always exists for every combination
-                        labyrinthTest.board[i][j]=new Piece("X",0,"A",j,i);
-                    }
-        }
-		
-                ArrayList<int[]> visited = new ArrayList();
-                System.out.println(labyrinthTest.pathExists(visited,startX,startY,endX,endY));
+        	private Boolean pathExistsCP(Boolean[][] visited, int x1, int y1){
+            //set up the visited array list and how to check it
+                Boolean[][] newVisited = visited;
+		newVisited[x1][y1]=true;
+                
+                if(board[x1][y1].getTreasure().equals(player2.getCurrentCard())){
+                    whereToMoveCP[0] = x1;
+                    whereToMoveCP[1] = y1;
+                    return true;
+                }
+
+                
+		//check for edge of board, a proper path, and if it hasn't been visited
+		if(y1<6 && canMove(x1,y1,"N") && newVisited[x1][y1+1]==false){
+                    System.out.println("CPn");
+			return pathExistsCP(newVisited,x1,y1+1);
+                        
+		}
+		if(x1<6 && canMove(x1,y1,"E") && newVisited[x1+1][y1]==false){
+                    System.out.println("CPe");
+			return pathExistsCP(newVisited,x1+1,y1);
+		}
+		if(y1>0 && canMove(x1,y1,"S") && newVisited[x1][y1-1]==false){
+                    System.out.println("CPs");
+			return pathExistsCP(newVisited,x1,y1-1);
+		}
+		if(x1>0 && canMove(x1,y1,"W") && newVisited[x1-1][y1]==false){
+                    System.out.println("CPw");
+			return pathExistsCP(newVisited,x1-1,y1);
+                        
+		}		
+		//If there's nowhere left to check and you haven't made it to the {x2,y2}
+                return false;
 	}
-	
-	
 	private boolean checkForTreasure(Player player){
 		//checks if the piece the player moved to has the treasure they need
-		int[] position = player.getLocation();
-		int x = position[0];
-		int y = position[1];
+		Location position = player.getLocation();
+		int x = position.x;
+		int y = position.y;
             //if the piece the player is on has the treasure they need, return true
 		return board[x][y].getTreasure().equals(player.getCurrentCard());
 	}
@@ -447,11 +461,13 @@ public class Labyrinth {
 			Player player = getWhoseTurn();
                         
                         System.out.println("Spare= " +spare.type+"-"+spare.orientation);
+                                                
                         
 			//get user input on where to put in their spare piece
-			int[] location = gui.gg.getInsertLocation();
-//                        int[] guiLoc = gui.convertToGuiLoc(location);
-
+                        int[] location = new int[2];
+                        if(player.isCP==false){
+                            location = gui.getInsertLocation();
+                        }
 			insertPiece(location);
                         
                         //check if the play shifts with the board
@@ -460,28 +476,104 @@ public class Labyrinth {
 			shiftPlayerLocation(player2,location);
 			
 			//NEED TO UPDATE THE gui HERE BECAUSE THE BOARD SHIFTED
-			gui.gg.displayBoard(board);
+			gui.displayBoard(board);
+                        
+                        System.out.println(Arrays.toString(player.location));
 			//get where the player wants to move and where they are
-			int hereX = player.getLocation()[0];
-			int hereY = player.getLocation()[1];
-			int[] moveTo = gui.gg.wantToMoveHere();
-			int moveX = moveTo[0];
-			int moveY = moveTo[1];
-			
+                        for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[0] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[1] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[2] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        
+                    for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[3] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    }
+                    int moveX=0;
+                    int moveY=0;
+                    if(player.isCP == false){    
+			int hereX = player.getLocation().x;
+			int hereY = player.getLocation().y;
+			int[] moveTo = gui.wantToMoveHere();
+			moveX = moveTo[0];
+			moveY = moveTo[1];
+                        
+                        
 			//some sort of recursive canMove in pathExists
-			ArrayList<int[]> visited = new ArrayList();
+			Boolean[][] visited = new Boolean[7][7];
+                        for(int i =0;i<7;i++){
+                             for(int j =0;j<7;j++){
+                                 visited[i][j]= false;
+                             }
+                        }
+                        
 			while(pathExists(visited,hereX,hereY,moveX,moveY)==false){
 				//tell user to try a new spot
-				moveTo = gui.gg.wantToMoveHere();
+				moveTo = gui.wantToMoveHere();
+                                gui.usersGoalEntered=false;
 				moveX = moveTo[0];
 				moveY = moveTo[1];
+                                System.out.println("herex: " + hereX);
+                                System.out.println("herey: " + hereY);
+                                System.out.println("movex: " + moveX);
+                                System.out.println("movey: " + moveY);
+                                			
+                            for(int i =0;i<7;i++){
+                                 for(int j =0;j<7;j++){
+                                     visited[i][j]= false;
+                                 }
+                        }
+                                //System.out.println("moveX and moveY =  " + moveX + " ,"+ moveY);
 			}
-			
-                        
-                        
+                    }
+                    else{
+                        Boolean[][] visited = new Boolean[7][7];
+                        int hereX = player.getLocation().x;
+			int hereY = player.getLocation().y;
+                        if(pathExistsCP(visited,hereX,hereY)==true){
+                            moveX = whereToMoveCP[0];
+                            moveY = whereToMoveCP[1];
+                        }
+                        else{
+                            //move to some random location!!!!!!!!!!!!!1
+                        }
+                    }
+  
 			//if path exists move the player to the piece
 			player.updateLocation(moveX,moveY);
 			
+                        System.out.println(Arrays.toString(player.location));
+                        
 			//then check for treasure for that player
 			if(checkForTreasure(player)==true){
 				System.out.println("You found treasure");
@@ -498,35 +590,43 @@ public class Labyrinth {
 			}
 		}
 	}
+        public static void testPathExists(){
+              for (int i =0; i<7; i++){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        labyrinthTest.board[i][j]=new Piece("X",0,"A",j,i);
+                        
+                        System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    
+        }
+                ArrayList<int[]> visited = new ArrayList();
+                //System.out.println(labyrinthTest.pathExists(visited,3,3,4,4));
+
+	}
 	
 
 //--------------------------- MAIN METHOD ----------------------------------------------------
 	
 	public static void main(String[] args) {
-		
-		//testPathExists(0,2,4,0); //Function to test path exists 
+//                labyrinthTest = new Labyrinth(true);
+//                Labyrinth.testPathExists();
+		                
                 
 		labyrinth = new Labyrinth();
-		                
-		if(labyrinth.debug == true){
-			//print out the board pieces treasure.
-			//you can see any of the variables for the piece by changing labyrinth.board[i][j].???? <-here
-//			for(int i=0;i<7;i++){
-//				for(int j=0;j<7;j++){
-//					System.out.print(labyrinth.board[j][6-i].orientation+"   ");
-//				}
-//                                System.out.print("\n");
-//                                System.out.print("\n");
-//			}
+
+//		if(labyrinth.debug == true){
+//			//print out the board pieces treasure.
+//			//you can see any of the variables for the piece by changing labyrinth.board[i][j].???? <-here
+//
 //			System.out.println("Spare: " + labyrinth.spare.treasure);
 //			
 //			System.out.println("Player1 deck: " + labyrinth.player1.deck);
 //			
 //			System.out.println("Player2 deck: " + labyrinth.player2.deck);
 //		}
-//
-//	}
-	
-                }
+
         }
+	
 }
+        

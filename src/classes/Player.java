@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package classes;
+package labyrinth;
 
+import ch.aplu.jgamegrid.Actor;
+import ch.aplu.jgamegrid.Location;
 import java.util.ArrayList;
 
 /**
  *
  * @author seanflynn
  */
-public class Player {
+public class Player extends Actor {
 
     String playerName;
     String playerColor;
@@ -21,8 +23,11 @@ public class Player {
     ArrayList<String> treasuresFound = new ArrayList();
     int cardsLeft;
     String currentTreasure;
+    Boolean isCP = false;
 
     Player(String player, String color, int startX, int startY, ArrayList cardsDelt) {
+        super("sprites/"+ color+ ".png");
+
         playerName = player;
         playerColor = color;
         updateLocation(startX, startY);
@@ -42,10 +47,14 @@ public class Player {
     public void updateLocation(int x, int y) {
         location[0] = x;
         location[1] = y;
+        this.setLocation(new Location(x,y));
+        
+        
     }
-
-    public int[] getLocation() {
-        return location;
+    @Override
+    public Location getLocation() {
+        Location loc = new Location(location[0],location[1]);
+        return loc ;
     }
 
     public String getColor() {

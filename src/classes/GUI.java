@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package classes;
+package labyrinth;
 
 import ch.aplu.jgamegrid.*;
-import java.awt.*;
-import java.util.Arrays;
-import javax.swing.JPanel;
+import java.util.Scanner;
 
 /**
  *
@@ -16,8 +14,13 @@ import javax.swing.JPanel;
  */
 public class GUI extends GameGrid implements GGMouseListener {
     
+    public Actor user;
     public int[] usersGoal = new int[2];
     public int[] insertLoc = new int[2];
+    boolean usersGoalEntered = false;
+    boolean insertLocEntered = false;
+    Scanner input;
+            
     
 //    public GGTileMap tileMap;
     public static GGTileMap spareMap;
@@ -43,13 +46,10 @@ public class GUI extends GameGrid implements GGMouseListener {
 
     
     public  GUI(){
-        super();
-        setCellSize(62);
-        setNbHorzCells(7);
-        setNbVertCells(7);
-        setGridColor(java.awt.Color.white);
-
-        addMouseListener(this, GGMouse.lPress | GGMouse.lRelease | GGMouse.lDClick);
+        super(7, 7, 62, java.awt.Color.white, false);
+        this.setActEnabled(false);
+        this.input = new Scanner(System.in);
+        addMouseListener(this, GGMouse.lDClick);
         super.setTitle("Labyrinth");
         usersGoal[0]=-1;
         usersGoal[1]=-1;
@@ -58,21 +58,21 @@ public class GUI extends GameGrid implements GGMouseListener {
         show();
         
     }
-        public  GUI(Piece spare, Piece[][] board){
-        super();
-        setCellSize(62);
-        setNbHorzCells(7);
-        setNbVertCells(7);
-        setGridColor(java.awt.Color.white);
-        addMouseListener(this, GGMouse.lPress);
-        GUI.spareMap = createTileMap(1,1,62,62);
-        GUI.spareMap.setPosition(new Point(500,500));
-        
-        super.setTitle("Labyrinth");
-
-        show();
-        
-    }
+//        public  GUI(Piece spare, Piece[][] board){
+//        super(7, 7, 62, java.awt.Color.white, false);
+//        JPanel jp2 = new JPanel();
+//        super.getFrame().add(jp2);
+////        tileMap = createTileMap(7,7,62,62);
+////        tileMap.setPosition(new Point(0,0));
+//        addMouseListener(this, GGMouse.lPress);
+//        GUI.spareMap = createTileMap(1,1,62,62);
+//        GUI.spareMap.setPosition(new Point(500,500));
+//        
+//        super.setTitle("Labyrinth");
+//
+//        show();
+//        
+//    }
    
     void addTile(String type, int orientation, String treasure, int x, int y) {
         String imageName = type+"-"+orientation+".png";
@@ -124,36 +124,39 @@ public class GUI extends GameGrid implements GGMouseListener {
     //label them based on the closest board spot to the triangle
 
     public int[] getInsertLocation() {
-        System.out.println("Where to insert piece?");
-        while (insertLoc[0] < 0){ 
-              //wait until mouse is double clicked
-              System.out.print(""); // Hacked!
+       
+        int[] loc = new int[2];
+        while (!insertLocEntered ){ 
+            System.out.print("Enter an x value: ");
+            loc[0] = input.nextInt();
+            System.out.print("Enter a y value: ");
+            loc[1] = input.nextInt();
+            insertLocEntered=true;
         }
-        
-        return convertToGuiLoc(insertLoc);
+        return convertToGuiLoc(loc);
     }
     //this method will get called again if the user chooses a path that doesn't work
 
     public int[] wantToMoveHere() {
-        System.out.println("Drag/release actor to move it");
-        while (usersGoal[0] < 0){ 
-              //wait until mouse is double clicked
-              System.out.print(""); // Hacked!
+        System.out.println("Where to move user to?");
+        int[] loc = new int[2];
+        while (!usersGoalEntered ){ 
+            System.out.print("");
         }
-        System.out.println("Returning "+ Arrays.toString(insertLoc));
-        return insertLoc;
+        usersGoalEntered=false;
+        return convertToGuiLoc(loc);
     }
     
+    
     public int[] convertToGuiLoc(int[] loc){
-        System.out.println(" Location " + Arrays.toString(loc));
+        
         int x = 6-loc[1];
         int y = loc[0];
-        
+        int[] newLoc = {y,x};
         loc[0]=y;
         loc[1]=x;
-        
-        System.out.println("converted to " + x +","+ y);
-        return loc;
+
+        return newLoc;
     }
 
      public int[] convertToMathLoc(int[] loc){
@@ -177,15 +180,19 @@ public class GUI extends GameGrid implements GGMouseListener {
     void displayBoard(Piece[][] board) {
         for (int i=0;i<7;i++){
             for (int j=0;j<7;j++){
+                Location loc = new Location(j,6-i);
+                this.removeActorsAt(loc);
                 Piece piece = board[j][i];
-                int[] loc = {j,i};
                 String type = piece.type;
                 int orientation = piece.orientation;    
                 String treasure = piece.treasure;
                 String imageName = "sprites/"+type+"-"+orientation+".png";
                 Piece thisPiece = new Piece(type, orientation, treasure, j, 6-i);
-                this.addActor(thisPiece, new Location (j,6-i));
-//                tileMap.setImage(imageName, j, 6-i );//because the kind people of Czech Republic made origin top left instead of bottom left
+                this.addActor(thisPiece, loc); 
+                if (!treasure.equals("null")){
+                    Treasure t = new Treasure(treasure);
+                    this.addActor(t, loc);
+                }
                 
             }
         }
@@ -204,26 +211,22 @@ public class GUI extends GameGrid implements GGMouseListener {
     usersGoal[1]=loc[1];
     
         switch (mouse.getEvent()) {
-            case GGMouse.lPress:
-//                user = getOneActorAt(location);
-                break;
-            case GGMouse.lRelease:
-                insertLoc[0]=-1;
-                insertLoc[1]=-1;
-                usersGoal[0]=loc[0];
-                usersGoal[1]=loc[1];
-                break;
+            
             case GGMouse.lDClick:
-                usersGoal[0]=-1;
-                usersGoal[1]=-1;
+                System.out.println("Mouse double clicked");
                 insertLoc[0]=loc[0];
                 insertLoc[1]=loc[1];
+                usersGoal[0]=loc[0];
+                usersGoal[1]=loc[1];
+                usersGoalEntered=true;
                 break;
+
+
             default:
                 break;
         }
 
-    return false; 
+    return true; 
         
     }
     
