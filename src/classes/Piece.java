@@ -33,7 +33,6 @@ public class Piece extends Actor{
         setPaths(this);
     }
 
-    
     public boolean isitGlued() {
         if (spot[0] == -1) {
             return false;
@@ -55,13 +54,11 @@ public class Piece extends Actor{
 
     public void rotateLeft() { //Counter Clockwise
         boolean temp = paths[0];
-        for (int i = 0; i < 4; i++) {
-            if (i < 3) {
-                paths[i] = paths[i + 1];
-            } else {
-                paths[3] = temp;
-            }
-           }
+        for (int i=0; i<3 ; i++){
+             paths[i]=paths[i+1];
+        }
+        paths[3]=temp;
+
         if (!isitGlued()) {
             if (orientation == 0) {
                 orientation = 3;
@@ -70,18 +67,21 @@ public class Piece extends Actor{
             }
 
         }
-
     }
 
     public void rotateRight() { // Clockwise
+
+     
+        
         boolean temp = paths[3];
-        for (int i = 0; i < 4; i++) {
-            if (i < 3) {
-                paths[i + 1] = paths[i];
-            } else {
-                paths[0] = temp;
-            }
+
+        for (int i=3; i>0 ; i--){
+             
+             paths[i]=paths[i-1];
+             paths[i-1]=temp;
         }
+        
+
        
        if (!isitGlued()) {
            orientation++;
