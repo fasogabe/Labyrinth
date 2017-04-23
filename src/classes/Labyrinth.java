@@ -1,17 +1,31 @@
 package classes;
 
+import ch.aplu.jgamegrid.*;
+import ch.aplu.jgamegrid.GGMouse;
+import ch.aplu.jgamegrid.GGMouseListener;
 import ch.aplu.jgamegrid.Location;
+import java.awt.*;
 import java.awt.EventQueue;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import javax.swing.*;
 
-public class Labyrinth {
+public class Labyrinth extends JFrame implements ActionListener, GGMouseListener{
 	
     
 	
 //------------------ VARIABLES -------------------------------------------------------
+        // GUI components
+        public GameGrid gg;
+        public SparePanel sp;
+        public CardPanel ca;
+        JButton button;
 	
+        // Game variables
 	private boolean debug = true;
 	private ArrayList<Piece> pieces = new ArrayList();
 	private Piece[][] board = new Piece[7][7];
@@ -24,16 +38,30 @@ public class Labyrinth {
 	//playing a cp?
 	boolean playCP;
 	boolean gameOver = false;
-        private mainGUI gui;
+        //private GameGrid gg;
         static Labyrinth labyrinth;
         static Labyrinth labyrinthTest;
+        public int[] insertLoc = new int[2];
+        public int[] usersGoal = new int[2];
+        boolean usersGoalEntered = false;
+        boolean insertLocEntered = false;
         private int[] whereToMoveCP = new int[2];
         
+        
         public Labyrinth(){
+            
+                super("Labyrinth");
+                //setResizable(false);
+                setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                setPreferredSize(new Dimension(875, 565));
+                setContentPane(new JLabel(new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/stone_background.png")));
+                setLayout(new GridBagLayout()); // set layout manager
+                
                 this.initializePieces();
                 this.initializeBoard();
 		this.initializeDeck();
 		this.initializePlayers();
+                this.initComponents();      // GameGrid gg is instantiated here
 		this.playGame();
         }
 
@@ -135,13 +163,7 @@ public class Labyrinth {
 		spare = pieces.get(0);
 		pieces.remove(spare);
                 
-                // Invoke EventQueue
-//                EventQueue.invokeLater(new Runnable() {
-//                    public void run() {
-//                        new mainGUI(,board, spare).setVisible(true);
-//                        
-//                    }
-//                });
+                
                 
 		
 	
@@ -186,7 +208,7 @@ public class Labyrinth {
 	}	
 	private void initializePlayers(){
 		//get user input from a gui that pops up at the start maybe?
-		String player1Name = mainGUI.getPlayer1Name();
+		String player1Name = getPlayer1Name();
 		ArrayList<String> halfDeck = new ArrayList(); 
 		for(int i=0;i<deck.size()/2;i++){
 			halfDeck.add(deck.get(2*i));
@@ -196,23 +218,298 @@ public class Labyrinth {
 		}
 		player1 = new Player(player1Name,"blue",6,6,halfDeck);
 		//user input to say, "do you want to play a cp or 1V1
-		playCP = mainGUI.whoToPlay();
+		playCP = whoToPlay();
 		if(playCP == true){
 			player2 = new Player("CP","green",6,0,deck);
                         player2.isCP = true;
 		}
 		else{
-			String player2Name = mainGUI.getPlayer2Name();
+			String player2Name = getPlayer2Name();
 			player2 = new Player(player2Name,"green",6,0,deck);
 		}
 //                gui.gg.addActor(player1, new Location(0,0));
 	}
+        
+        private void initComponents() {
+        
+        // Create layout constraints
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Create buttons - load new triangle every 3 buttons
+        ImageIcon tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/down_triangle.png");
+        // Button 1
+        button = new JButton(tri); 
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("1");
+        gbc.weightx = 0.5;
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 40, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 3
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("3");
+        gbc.weightx = 0.5;
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 5
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("5");
+        gbc.weightx = 0.5;
+        gbc.gridx = 6;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 40);
+        getContentPane().add(button, gbc);
+        
+        
+        // SparePanel
+        sp = new SparePanel(spare);  // Create sparepanel object
+        gbc.gridheight = 4;
+        gbc.gridx = 9;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        getContentPane().add(sp, gbc);
+        
+        // CardPanel
+        ca = new CardPanel(this.getWhoseTurn());  // Create cardpanel object
+        gbc.gridheight = 4;
+        gbc.gridx = 9;
+        gbc.gridy = 5;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        getContentPane().add(ca, gbc);
+        
+
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/right_triangle.png");
+        // Button 7
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("7");
+        gbc.gridheight = 1;
+        gbc.weighty = 0.5;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(40, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 9
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("9");
+        gbc.weighty = 0.5;
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 11
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("11");
+        gbc.weighty = 0.5;
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 40, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // GameGrid panel
+        gg = new GameGrid();         // Create gui object (the board)
+        gg.setCellSize(62);
+        gg.setNbHorzCells(7);
+        gg.setNbVertCells(7);
+        gg.setGridColor(Color.white);
+        gg.addMouseListener(this,GGMouse.lDClick);
+        gbc.gridwidth = 7;
+        gbc.gridheight = 7;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        getContentPane().add(gg, gbc);
+        
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/left_triangle.png");
+        // Button 8
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("8");
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.gridx = 8;
+        gbc.gridy = 2;
+        gbc.insets = new Insets(40, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 10
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("10");
+        gbc.gridx = 8;
+        gbc.gridy = 4;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 12
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("12");
+        gbc.gridx = 8;
+        gbc.gridy = 6;
+        gbc.insets = new Insets(0, 0, 40, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/up_triangle.png");
+        // Button 2
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("2");
+        gbc.gridx = 2;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 40, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 4
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("4");
+        gbc.gridx = 4;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        getContentPane().add(button, gbc);
+        
+        
+        // Button 6
+        button = new JButton(tri);
+        button.setPreferredSize(new Dimension(39,39));
+        button.setBorder(null);
+        button.setActionCommand("6");
+        gbc.gridx = 6;
+        gbc.gridy = 8;
+        gbc.insets = new Insets(0, 0, 0, 40);
+        getContentPane().add(button, gbc);
+        
+        
+        // Pack components
+        pack();
+        
+        // Display initial board setup
+        displayBoard(board);
+        gg.addActor(player1, new Location(0,0));
+        //gg.doRun();
+
+    }
+    
+    void displayBoard(Piece[][] board) {
+        for (int i=0;i<7;i++){
+            for (int j=0;j<7;j++){
+                Location loc = new Location(j,6-i);
+                gg.removeActorsAt(loc);
+                Piece piece = board[j][i];
+                String type = piece.type;
+                int orientation = piece.orientation;    
+                String treasure = piece.treasure;
+//                String imageName = "sprites/"+type+"-"+orientation+".png";
+                Piece thisPiece = new Piece(type, orientation, treasure, j, 6-i);
+                gg.addActor(thisPiece, loc); 
+                if (!treasure.equals("null")){
+                    Treasure t = new Treasure(treasure);
+                    gg.addActor(t, loc);
+                }
+
+            }
+        }
+        show();
+    }
+    public static boolean whoToPlay() {
+        //maybe radio buttons here?
+        String[] options = {"Computer", "Human"};
+        int n = JOptionPane.showOptionDialog(null, "CHOOSE YOUR OPPONENT", "",
+                                                JOptionPane.YES_NO_OPTION,
+                                                JOptionPane.QUESTION_MESSAGE,
+                                                null, options, options[0]);
+        //if user chooses to play a cp return true
+        return n == 0;
+        
+    }
+    
+    public static String getPlayer1Name() {
+        //text box input
+        String name = (String)JOptionPane.showInputDialog("Welcome to Labyrinth!\n\nEnter your name:");
+        return name;
+    }
+    public static String getPlayer2Name() {
+        //text box input
+        String name = (String)JOptionPane.showInputDialog("Human #2, enter your name:");
+        return name;
+    }
+    
+    public int[] convertToGuiLoc(int[] loc){
+        System.out.println(" Location " + Arrays.toString(loc));
+        int x = 6-loc[1];
+        int y = loc[0];
+        
+        loc[0]=y;
+        loc[1]=x;
+        
+        System.out.println("converted to " + x +","+ y);
+        return loc;
+    }
+    
+    public int[] getInsertLocation() {
+        System.out.println("Where to insert piece?");
+        if (insertLoc[0] < 0) {
+            return insertLoc;
+        } else {
+            return convertToGuiLoc(insertLoc);
+        }
+        
+        
+    }
+    
+    public int[] wantToMoveHere() {
+        System.out.println("Where to move user to?");
+        int[] loc = new int[2];
+        while (!usersGoalEntered ){ 
+            System.out.print("");
+        }
+        usersGoalEntered=false;
+        return convertToGuiLoc(loc);
+    }
 	
 	
 //------------------- GAME PLAY METHODS -----------------------------------------------	
 	
 	//to change the turn
 	private void nextTurn(){
+                usersGoal[0] = -1;
+                usersGoal[1] = -1;
+                insertLoc[0] = -1;
+                insertLoc[1] = -1;
 		if(tracker==true){
 			tracker=false;
 		}else{
@@ -472,9 +769,7 @@ public class Labyrinth {
 	private void playGame(){
             
 
-                gui = new mainGUI(this, board, spare);
-                gui.setVisible(true);
-                gui.gg.addActor(player1, new Location(0,0));
+
             
 		while(gameOver == false){
 			nextTurn();
@@ -482,11 +777,13 @@ public class Labyrinth {
                         
                         
                         System.out.println("Spare= " +spare.type+"-"+spare.orientation);
+                        // need loop here to get most recent spare from sparepanel before calling insertPiece
+                        
                         
 			//get user input on where to put in their spare piece
                         int[] location = new int[2];
                         if(player.isCP==false){
-                            location = gui.getInsertLocation();
+                            location = getInsertLocation();
                         }
 			insertPiece(location);
                         
@@ -496,7 +793,7 @@ public class Labyrinth {
 			shiftPlayerLocation(player2,location);
 			
 			//NEED TO UPDATE THE gui HERE BECAUSE THE BOARD SHIFTED
-			gui.updateBoard(board);
+			displayBoard(board);
 			//get where the player wants to move and where they are
                         for (int i =6; i>=0; i--){
                     for (int j =0; j<7; j++){
@@ -542,7 +839,7 @@ public class Labyrinth {
                     if(player.isCP == false){    
 			int hereX = player.getLocation().x;
 			int hereY = player.getLocation().y;
-			int[] moveTo = gui.gg.wantToMoveHere();
+			int[] moveTo = wantToMoveHere();
 			moveX = moveTo[0];
 			moveY = moveTo[1];
                         
@@ -557,8 +854,8 @@ public class Labyrinth {
                         
 			while(pathExists(visited,hereX,hereY,moveX,moveY)==false){
 				//tell user to try a new spot
-				moveTo = gui.gg.wantToMoveHere();
-                                gui.gg.usersGoalEntered=false;
+				moveTo = wantToMoveHere();
+                                usersGoalEntered=false;
 				moveX = moveTo[0];
 				moveY = moveTo[1];
                                 System.out.println("herex: " + hereX);
@@ -622,6 +919,77 @@ public class Labyrinth {
                 //System.out.println(labyrinthTest.pathExists(visited,3,3,4,4));
 
 	}
+        
+//--------------------------- ACTION LISTENERS ------------------------------------------------
+        
+        @Override
+    public void actionPerformed(ActionEvent e) {
+        String Action = e.getActionCommand();
+        insertLoc = new int[2];
+        switch (Action) {
+            case "1":
+                insertLoc[0] = 1;
+                insertLoc[1] = 0;
+            case "2":
+                insertLoc[0] = 1;
+                insertLoc[1] = 6;
+            case "3":
+                insertLoc[0] = 3;
+                insertLoc[1] = 0;
+            case "4":
+                insertLoc[0] = 3;
+                insertLoc[1] = 6;
+            case "5":
+                insertLoc[0] = 5;
+                insertLoc[1] = 0;
+            case "6":
+                insertLoc[0] = 5;
+                insertLoc[1] = 6;
+            case "7":
+                insertLoc[0] = 0;
+                insertLoc[1] = 1;
+            case "8":
+                insertLoc[0] = 6;
+                insertLoc[1] = 1;
+            case "9":
+                insertLoc[0] = 0;
+                insertLoc[1] = 3;
+            case "10":
+                insertLoc[0] = 6;
+                insertLoc[1] = 3;
+            case "11":
+                insertLoc[0] = 0;
+                insertLoc[1] = 5;
+            case "12":
+                insertLoc[0] = 6;
+                insertLoc[1] = 5;
+        }
+        this.spare = sp.spare;
+    }
+        
+        public boolean mouseEvent(GGMouse mouse) {
+        
+            Location location = gg.toLocationInGrid(mouse.getX(), mouse.getY());
+    
+            int[] loc = {location.x,location.y};
+    
+
+            switch (mouse.getEvent()) {
+            
+                case GGMouse.lDClick:
+                    System.out.println("Mouse double clicked");
+                    System.out.println(location);
+                
+                    break;
+
+
+                default:
+                    break;
+        }
+
+    return true; 
+        
+    }
 	
 
 //--------------------------- MAIN METHOD ----------------------------------------------------
@@ -629,9 +997,16 @@ public class Labyrinth {
 	public static void main(String[] args) {
 		
                 
-		labyrinth = new Labyrinth();
+		EventQueue.invokeLater(new Runnable() {
+                    public void run() {
+                        Labyrinth labyrinth = new Labyrinth();
+
+                        labyrinth.setVisible(true);
+
+                    }
+                });
 		                
-		if(labyrinth.debug == true){
+//		if(labyrinth.debug == true){
 			//print out the board pieces treasure.
 			//you can see any of the variables for the piece by changing labyrinth.board[i][j].???? <-here
 //			for(int i=0;i<7;i++){
@@ -650,6 +1025,6 @@ public class Labyrinth {
 //
 //	}
 	
-                }
+//                }
         }
 }

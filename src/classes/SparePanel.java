@@ -37,6 +37,10 @@ public class SparePanel extends JPanel implements ActionListener {
 
     }
     
+    public Piece getSpare() {
+        return spare;
+    }
+    
     private void initComponents() {
         
         // create spare icon label
@@ -86,12 +90,7 @@ public class SparePanel extends JPanel implements ActionListener {
         
     }
     
-    @Override
-    protected void paintComponent(Graphics g) {
 
-        super.paintComponent(g);
-        g.drawImage(b, 0, 0, null);
-    }
     
 
 
