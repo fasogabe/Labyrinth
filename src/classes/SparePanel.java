@@ -17,7 +17,6 @@ public class SparePanel extends JPanel implements ActionListener {
     Piece spare;
     JButton rLeft, rRight;
     JLabel l;
-    Image b;
     ImageIcon spareIcon, rlIcon, rrIcon;
 
     
@@ -31,14 +30,23 @@ public class SparePanel extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(250,100));
         setLayout(new FlowLayout(FlowLayout.CENTER, 25, 18));
         
-        
-        
         initComponents();               // initialize components
 
     }
     
     public Piece getSpare() {
         return spare;
+    }
+    public void setSpare(Piece spare) {
+        this.spare = spare;
+        setSpareIcon();
+    }
+    
+    private void setSpareIcon() {
+        spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
+        l.setIcon(spareIcon);   // update spare icon
+        l.validate();
+        
     }
     
     private void initComponents() {
@@ -76,16 +84,19 @@ public class SparePanel extends JPanel implements ActionListener {
         
         if (Action.equals("rl")) {  // rotate left pressed 
             spare.rotateLeft();
-            spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
-            l.setIcon(spareIcon);   // update spare icon
-            add(l, BorderLayout.CENTER);
+            setSpareIcon();
+//            spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
+//            l.setIcon(spareIcon);   // update spare icon
+//            add(l, BorderLayout.CENTER);
+            
             System.out.println("Spare= " +spare.type+"-"+spare.orientation);
         }
         if (Action.equals("rr")) { // rotate right pressed
             spare.rotateRight();
-            spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
-            l.setIcon(spareIcon);   // update spare icon
-            add(l, BorderLayout.CENTER);
+            setSpareIcon();
+//            spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
+//            l.setIcon(spareIcon);   // update spare icon
+//            add(l, BorderLayout.CENTER);
             System.out.println("Spare= " +spare.type+"-"+spare.orientation);
         }
         

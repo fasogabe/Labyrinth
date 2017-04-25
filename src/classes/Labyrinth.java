@@ -25,10 +25,11 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         public GameGrid gg;
         public SparePanel sp;
         public CardPanel ca;
-        JButton button;
+        JButton button1, button2, button3, button4, button5, button6,
+                button7, button8, button9, button10, button11, button12;
 	
         // Game variables
-	private boolean debug = true;
+	private boolean debug = false;
 	private ArrayList<Piece> pieces = new ArrayList();
 	private Piece[][] board = new Piece[7][7];
 	private Piece spare;
@@ -45,11 +46,11 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         //static Labyrinth labyrinthTest;
         public int[] insertLoc = new int[2];
         public int[] usersGoal = new int[2];
-        boolean usersGoalEntered = false;
-        AtomicBoolean insertLocEntered;
+        volatile boolean usersGoalEntered = false;
+        volatile boolean insertLocEntered = false;
         private int[] whereToMoveCP = new int[2];
         
-        Thread threadObject;
+        static ImageIcon labyIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/labyrinth_icon.png");
         
         
         public Labyrinth(){
@@ -57,7 +58,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                 super("Labyrinth");
                 //setResizable(false);
                 setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                //setPreferredSize(new Dimension(875, 565));
+                setPreferredSize(new Dimension(860, 560));
                 setContentPane(new JLabel(new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/stone_background.png")));
                 setLayout(new GridBagLayout()); // set layout manager
                 
@@ -68,8 +69,8 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                 this.initComponents();      // GameGrid, SparePanel, CardPanel, JButtons created
                 
                 //gg.addActor(player1, new Location(0,0));
-                
-		this.playGame();            // Game initiated
+                this.nextTurn();
+		//this.playGame();            // Game initiated
         }
 
 	public Labyrinth(boolean testing){
@@ -156,6 +157,8 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 				for(int j=0;j<7;j++){
 					if(board[i][j]==null){
 						board[i][j]= aPiece;
+                                                board[i][j].updatePaths();
+                                                board[i][j].orientation = randomSpin;
 						pieces.remove(aPiece);
 						//kill the for loops after the piece is placed
 						i=7;
@@ -223,7 +226,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		for(int i=0;i<halfDeck.size();i++){
 			deck.remove(halfDeck.get(i));
 		}
-		player1 = new Player(player1Name,"blue",6,6,halfDeck);
+		player1 = new Player(player1Name,"blue",0,6,halfDeck);
 		//user input to say, "do you want to play a cp or 1V1
 		playCP = whoToPlay();
 		if(playCP == true){
@@ -245,42 +248,42 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         // Create buttons - load new triangle every 3 buttons
         ImageIcon tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/down_triangle.png");
         // Button 1
-        button = new JButton(tri); 
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("1");
-        button.addActionListener(this);
+        button1 = new JButton(tri); 
+        button1.setPreferredSize(new Dimension(39,39));
+        button1.setBorder(null);
+        button1.setActionCommand("1");
+        button1.addActionListener(this);
         gbc.weightx = 0.5;
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 40, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button1, gbc);
         
         
         // Button 3
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("3");
-        button.addActionListener(this);
+        button3 = new JButton(tri);
+        button3.setPreferredSize(new Dimension(39,39));
+        button3.setBorder(null);
+        button3.setActionCommand("3");
+        button3.addActionListener(this);
         gbc.weightx = 0.5;
         gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button3, gbc);
         
         
         // Button 5
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("5");
-        button.addActionListener(this);
+        button5 = new JButton(tri);
+        button5.setPreferredSize(new Dimension(39,39));
+        button5.setBorder(null);
+        button5.setActionCommand("5");
+        button5.addActionListener(this);
         gbc.weightx = 0.5;
         gbc.gridx = 6;
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 0, 40);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button5, gbc);
         
         
         // SparePanel
@@ -304,43 +307,43 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         
         tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/right_triangle.png");
         // Button 7
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("7");
-        button.addActionListener(this);
+        button7 = new JButton(tri);
+        button7.setPreferredSize(new Dimension(39,39));
+        button7.setBorder(null);
+        button7.setActionCommand("7");
+        button7.addActionListener(this);
         gbc.gridheight = 1;
         gbc.weighty = 0.5;
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.insets = new Insets(40, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button7, gbc);
         
         
         // Button 9
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("9");
-        button.addActionListener(this);
+        button9 = new JButton(tri);
+        button9.setPreferredSize(new Dimension(39,39));
+        button9.setBorder(null);
+        button9.setActionCommand("9");
+        button9.addActionListener(this);
         gbc.weighty = 0.5;
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.insets = new Insets(0, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button9, gbc);
         
         
         // Button 11
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("11");
-        button.addActionListener(this);
+        button11 = new JButton(tri);
+        button11.setPreferredSize(new Dimension(39,39));
+        button11.setBorder(null);
+        button11.setActionCommand("11");
+        button11.addActionListener(this);
         gbc.weighty = 0.5;
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.insets = new Insets(0, 0, 40, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button11, gbc);
         
         
         // GameGrid panel
@@ -360,101 +363,111 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         
         tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/left_triangle.png");
         // Button 8
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("8");
-        button.addActionListener(this);
+        button8 = new JButton(tri);
+        button8.setPreferredSize(new Dimension(39,39));
+        button8.setBorder(null);
+        button8.setActionCommand("8");
+        button8.addActionListener(this);
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.gridx = 8;
         gbc.gridy = 2;
         gbc.insets = new Insets(40, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button8, gbc);
         
         
         // Button 10
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("10");
-        button.addActionListener(this);
+        button10 = new JButton(tri);
+        button10.setPreferredSize(new Dimension(39,39));
+        button10.setBorder(null);
+        button10.setActionCommand("10");
+        button10.addActionListener(this);
         gbc.gridx = 8;
         gbc.gridy = 4;
         gbc.insets = new Insets(0, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button10, gbc);
         
         
         // Button 12
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("12");
-        button.addActionListener(this);
+        button12 = new JButton(tri);
+        button12.setPreferredSize(new Dimension(39,39));
+        button12.setBorder(null);
+        button12.setActionCommand("12");
+        button12.addActionListener(this);
         gbc.gridx = 8;
         gbc.gridy = 6;
         gbc.insets = new Insets(0, 0, 40, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button12, gbc);
         
         
         tri = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/images/up_triangle.png");
         // Button 2
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("2");
-        button.addActionListener(this);
+        button2 = new JButton(tri);
+        button2.setPreferredSize(new Dimension(39,39));
+        button2.setBorder(null);
+        button2.setActionCommand("2");
+        button2.addActionListener(this);
         gbc.gridx = 2;
         gbc.gridy = 8;
         gbc.insets = new Insets(0, 40, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button2, gbc);
         
         
         // Button 4
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("4");
-        button.addActionListener(this);
+        button4 = new JButton(tri);
+        button4.setPreferredSize(new Dimension(39,39));
+        button4.setBorder(null);
+        button4.setActionCommand("4");
+        button4.addActionListener(this);
         gbc.gridx = 4;
         gbc.gridy = 8;
         gbc.insets = new Insets(0, 0, 0, 0);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button4, gbc);
         
         
         // Button 6
-        button = new JButton(tri);
-        button.setPreferredSize(new Dimension(39,39));
-        button.setBorder(null);
-        button.setActionCommand("6");
-        button.addActionListener(this);
+        button6 = new JButton(tri);
+        button6.setPreferredSize(new Dimension(39,39));
+        button6.setBorder(null);
+        button6.setActionCommand("6");
+        button6.addActionListener(this);
         gbc.gridx = 6;
         gbc.gridy = 8;
         gbc.insets = new Insets(0, 0, 0, 40);
-        getContentPane().add(button, gbc);
+        getContentPane().add(button6, gbc);
         
         
         // Pack components
         pack();
         
         // Display initial board setup
-        displayBoard(board);
-        gg.addActor(player1, new Location(0,0));
+        displayBoard();
+        //gg.addActor(player1, new Location(0,0));
         //gg.doRun();
 
     }
+//    void addActors(){
+//        ggSp.addActor(spare, new Location(0,1));
+//        if (!"null".equals(spare.treasure)){
+//            Treasure t = new Treasure(spare.type);
+//            ggSp.addActor(t, new Location(0,0));
+//        }
+//        ggSp.addActor(new Treasure(getWhoseTurn().currentTreasure), new Location(0,0));
+//    }
     
-    void displayBoard(Piece[][] board) {
-        for (int i=0;i<7;i++){
-            for (int j=0;j<7;j++){
-                Location loc = new Location(j,6-i);
+  
+    void displayBoard() {
+        gg.removeAllActors();
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                Location loc = new Location(j, 6 - i);
                 gg.removeActorsAt(loc);
                 Piece piece = board[j][i];
                 String type = piece.type;
                 int orientation = piece.orientation;    
                 String treasure = piece.treasure;
-
-                Piece thisPiece = new Piece(type, orientation, treasure, j, 6-i);
+                //String imageName = "sprites/"+type+"-"+orientation+".png ";
+                Piece thisPiece = new Piece(type, orientation, treasure, j, 6 - i);
                 gg.addActor(thisPiece, loc); 
                 if (!treasure.equals("null")){
                     Treasure t = new Treasure(treasure);
@@ -463,6 +476,8 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 
             }
         }
+        gg.addActor(player1, new Location(player1.location[0],6-player1.location[1]));
+        gg.addActor(player2, new Location(player2.location[0],6-player2.location[1]));
         show();
     }
     public static boolean whoToPlay() {
@@ -471,7 +486,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         int n = JOptionPane.showOptionDialog(null, "CHOOSE YOUR OPPONENT", "",
                                                 JOptionPane.YES_NO_OPTION,
                                                 JOptionPane.QUESTION_MESSAGE,
-                                                null, options, options[0]);
+                                                labyIcon, options, options[0]);
         //if user chooses to play a cp return true
         return n == 0;
         
@@ -479,24 +494,26 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
     
     public static String getPlayer1Name() {
         //text box input
-        String name = (String)JOptionPane.showInputDialog("Welcome to Labyrinth!\n\nEnter your name:");
+        String name = (String)JOptionPane.showInputDialog(null,
+                                                        "Welcome to Labyrinth!\n\nEnter your name:", "",
+                                                        JOptionPane.OK_OPTION,
+                                                        labyIcon, null, null);
         return name;
     }
     public static String getPlayer2Name() {
         //text box input
-        String name = (String)JOptionPane.showInputDialog("Human #2, enter your name:");
+        String name = (String)JOptionPane.showInputDialog(null, "Human #2, enter your name:", "",
+                                                        JOptionPane.OK_OPTION,
+                                                        labyIcon, null, null);
         return name;
     }
     
-    public int[] convertToGuiLoc(int[] loc){
-        System.out.println(" Location " + Arrays.toString(loc));
-        int x = 6-loc[1];
-        int y = loc[0];
+    public static int[] convertToGuiLoc(int[] loc) {
+        int x = loc[0];
+        int y = 6 - loc[1];
+        loc[0] = x;
+        loc[1] = y;
         
-        loc[0]=y;
-        loc[1]=x;
-        
-        System.out.println("converted to " + x +","+ y);
         return loc;
     }
     
@@ -586,19 +603,13 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	
 	//to change the turn
 	private void nextTurn(){
-                insertLocEntered = new AtomicBoolean(false);
-            
+
+                sp.setSpare(spare);
                 // reset userGoal and insertLoc
                 usersGoal[0] = -1;
                 usersGoal[1] = -1;
                 insertLoc[0] = -1;
                 insertLoc[1] = -1;
-                
-                if (playCP) {
-                    ca.setCurrentTreasure(player1.currentTreasure);
-                } else {
-                    ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
-                }
                 
                 
 		if(tracker==true){
@@ -606,6 +617,12 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		}else{
 			tracker=true;
 		}
+                
+                if (playCP) {
+                    ca.setCurrentTreasure(player1.currentTreasure);
+                } else {
+                    ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+                }
 	}
 	//to check whose turn it is
 	public Player getWhoseTurn(){
@@ -620,9 +637,9 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         public Piece getSpare(){
 		return spare;
 	}
-        public void setSpare(Piece spare) {
-                this.spare = spare;
-        }
+//        public void setSpare(Piece spare) {
+//                this.spare = spare;
+//        }
 	
 	private void isTheGameOver(){
 		if(player1.cardsLeft == 0 || player2.cardsLeft == 0){
@@ -857,36 +874,38 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	}
         
 	
-	public void playGame(){
+	public void playGame(int[] moveTo){
 
-		while(gameOver == false){
-			nextTurn();
+		//while(gameOver == false){
+			//nextTurn();
 			Player player = getWhoseTurn();
                         
-                        System.out.println("Spare= " +spare.type+"-"+spare.orientation);
+                        //System.out.println("Spare= " +spare.type+"-"+spare.orientation);
                         
                         // get user input on where to insert piece
-                        insertLoc = getInsertLocation();
+                        //insertLoc = getInsertLocation();
                         
                         
                         //System.out.println("button before here^^^^");
-			insertPiece(insertLoc);
+			//insertPiece(insertLoc);
                         
                         
                         //check if the play shifts with the board
-			shiftPlayerLocation(player1,insertLoc);
-			shiftPlayerLocation(player2,insertLoc);
+			//shiftPlayerLocation(player1,insertLoc);
+			//shiftPlayerLocation(player2,insertLoc);
 			
 			//NEED TO UPDATE THE gui HERE BECAUSE THE BOARD SHIFTED
-			displayBoard(board);
+			//displayBoard(board);
 			//get where the player wants to move and where they are
+                        
+                        printBoard();
 
                     int moveX=6;
                     int moveY=6;
                     if(player.isCP == false){    
 			int hereX = player.getLocation().x;
 			int hereY = player.getLocation().y;
-			int[] moveTo = wantToMoveHere();
+			//int[] moveTo = wantToMoveHere();
 			moveX = moveTo[0];
 			moveY = moveTo[1];
 
@@ -900,16 +919,21 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                              }
                         }
                         
-			while(pathExists(visited,hereX,hereY,moveX,moveY)==false){
+			if(pathExists(visited,hereX,hereY,moveX,moveY)==false){
 				//tell user to try a new spot
-				moveTo = wantToMoveHere();
-                                usersGoalEntered=false;
-				moveX = moveTo[0];
-				moveY = moveTo[1];
-                                System.out.println("herex: " + hereX);
-                                System.out.println("herey: " + hereY);
-                                System.out.println("movex: " + moveX);
-                                System.out.println("movey: " + moveY);
+                            
+                            
+                            
+				//moveTo = wantToMoveHere();
+                                
+//                                usersGoalEntered=false;
+//                                
+//				moveX = moveTo[0];
+//				moveY = moveTo[1];
+//                                System.out.println("herex: " + hereX);
+//                                System.out.println("herey: " + hereY);
+//                                System.out.println("movex: " + moveX);
+//                                System.out.println("movey: " + moveY);
                                 			
                             for(int i =0;i<7;i++){
                                  for(int j =0;j<7;j++){
@@ -918,6 +942,11 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                         }
                                 //System.out.println("moveX and moveY =  " + moveX + " ,"+ moveY);
 			}
+                        else{
+                            usersGoalEntered = true;
+                            insertLocEntered = false;
+                            player.updateLocation(moveX,moveY);
+                        }
                     }
                     else{
                         Boolean[][] visited = new Boolean[7][7];
@@ -926,15 +955,16 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                         if(pathExistsCP(visited,hereX,hereY)==true){
                             moveX = whereToMoveCP[0];
                             moveY = whereToMoveCP[1];
+                            player.updateLocation(moveX,moveY);
                         }
                         else{
-                            //move to some random location!!!!!!!!!!!!!1
+                            //move to some random location!!!!!!!!!!!!!
+                            player.updateLocation(moveX,moveY);
                         }
                     }
 			
 			//if path exists move the player to the piece
-			player.updateLocation(moveX,moveY);
-			
+                        
                         //System.out.println(Arrays.toString(player.location));
                         
 			//then check for treasure for that player
@@ -944,14 +974,18 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 			}
 			
 			//NEED TO UPDATE THE gui HERE BECAUSE THE PLAYER MOVED
-			displayBoard(board);
+			displayBoard();
+                        //gg.addActor(player, new Location(player.getLocation()));
 			//lastly check if the game is over
 			isTheGameOver();
 			//just to go through one round when debug is set to true so while loop can end
 			if(debug==true){
 				gameOver=true;
 			}
-		}
+                        if (!gameOver && usersGoalEntered) {
+                                nextTurn();
+                        }
+		//}
 	}
 //        public static void testPathExists(){
 //              for (int i =0; i<7; i++){
@@ -972,74 +1006,101 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         
         @Override
     public void actionPerformed(ActionEvent e) {
-        String Action = e.getActionCommand();
-        System.out.println(Arrays.toString(insertLoc));
-        switch (Action) {
-            case "1":
-                insertLoc[0] = 1;
-                insertLoc[1] = 6;
-            case "2":
-                insertLoc[0] = 1;
-                insertLoc[1] = 0;
-            case "3":
-                insertLoc[0] = 3;
-                insertLoc[1] = 6;
-            case "4":
-                insertLoc[0] = 3;
-                insertLoc[1] = 0;
-            case "5":
-                insertLoc[0] = 5;
-                insertLoc[1] = 6;
-            case "6":
-                insertLoc[0] = 5;
-                insertLoc[1] = 0;
-            case "7":
-                insertLoc[0] = 0;
-                insertLoc[1] = 5;
-            case "8":
-                insertLoc[0] = 6;
-                insertLoc[1] = 5;
-            case "9":
-                insertLoc[0] = 0;
-                insertLoc[1] = 3;
-            case "10":
-                insertLoc[0] = 6;
-                insertLoc[1] = 3;
-            case "11":
-                insertLoc[0] = 0;
-                insertLoc[1] = 1;
-            case "12":
-                insertLoc[0] = 6;
-                insertLoc[1] = 1;
+	if (!insertLocEntered) {
+        
+            String Action = e.getActionCommand();
+            System.out.println(Action);
+            switch (Action) {
+                case "1":
+                    insertLoc[0] = 1;
+                    insertLoc[1] = 6;
+                    break;
+                case "2":
+                    insertLoc[0] = 1;
+                    insertLoc[1] = 0;
+                    break;
+                case "3":
+                    insertLoc[0] = 3;
+                    insertLoc[1] = 6;
+                    break;
+                case "4":
+                    insertLoc[0] = 3;
+                    insertLoc[1] = 0;
+                    break;
+                case "5":
+                    insertLoc[0] = 5;
+                    insertLoc[1] = 6;
+                    break;
+                case "6":
+                    insertLoc[0] = 5;
+                    insertLoc[1] = 0;
+                    break;
+                case "7":
+                    insertLoc[0] = 0;
+                    insertLoc[1] = 5;
+                    break;
+                case "8":
+                    insertLoc[0] = 6;
+                    insertLoc[1] = 5;
+                    break;
+                case "9":
+                    insertLoc[0] = 0;
+                    insertLoc[1] = 3;
+                    break;
+                case "10":
+                    insertLoc[0] = 6;
+                    insertLoc[1] = 3;
+                    break;
+                case "11":
+                    insertLoc[0] = 0;
+                    insertLoc[1] = 1;
+                    break;
+                case "12":
+                    insertLoc[0] = 6;
+                    insertLoc[1] = 1;
+                    break;
+            }
+            this.spare = sp.spare;
+            System.out.println(Arrays.toString(insertLoc));
+            insertPiece(insertLoc);
+
+            shiftPlayerLocation(player1,insertLoc);
+            shiftPlayerLocation(player2,insertLoc);
+
+            sp.setSpare(spare);
+
+            displayBoard();
+
+            insertLocEntered = true;
+            usersGoalEntered = false;
         }
-        this.spare = sp.spare;
-        System.out.println(Arrays.toString(insertLoc));
-//        insertPiece(insertLoc);
-//        
-//        displayBoard(board);
     }
         
         public boolean mouseEvent(GGMouse mouse) {
         
-            Location location = gg.toLocationInGrid(mouse.getX(), mouse.getY());
-    
-            int[] loc = {location.x,location.y};
-    
+            if (!usersGoalEntered) {
+                Location location = gg.toLocationInGrid(mouse.getX(), mouse.getY());
 
-            switch (mouse.getEvent()) {
-            
-                case GGMouse.lDClick:
-                    System.out.println("Mouse double clicked");
-                    System.out.println(location);
+                int[] loc = {location.x,location.y};
+
+                switch (mouse.getEvent()) {
+
+                    case GGMouse.lDClick:
+                        System.out.println("Mouse double clicked");
+                        loc = convertToGuiLoc(loc);
+                        System.out.println(Arrays.toString(loc));
+                        playGame(loc);
+
+                        break;
+
+
+                    default:
+                        break;
+                }
                 
-                    break;
+            }
 
-
-                default:
-                    break;
-        }
-
-    return true; 
+    return false; 
         
     }
         
@@ -1080,4 +1141,46 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	
 //                }
         }
+
+    private void printBoard() {
+       for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[0] + ", ");
+			
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[1] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[2] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    System.out.println();
+                    }
+                        System.out.println();
+                        
+                    for (int i =6; i>=0; i--){
+                    for (int j =0; j<7; j++){
+                         // An x-piece is only for testing but all paths are true so a path always exists for every combination
+                        System.out.print(board[j][i].paths[3] + ", ");
+                        
+                        //System.out.println(i+ " , " + j + "=" +Arrays.toString(labyrinthTest.board[i][j].paths));
+                    }
+                    }
+    }
 }

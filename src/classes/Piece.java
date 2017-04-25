@@ -51,7 +51,18 @@ public class Piece extends Actor{
     public int[] getSpot() {
         return spot;
     }
-
+    
+    public void updatePaths() {
+        
+        for (int i = 0; i < orientation;i++) {
+            boolean temp = paths[3];
+            for (int j = 3; j > 0; j--) {
+                paths[j] = paths[j-1];
+                paths[j-1] = temp;
+            }
+        }
+    }
+    
     public void rotateLeft() { //Counter Clockwise
         boolean temp = paths[0];
         for (int i=0; i<3 ; i++){
