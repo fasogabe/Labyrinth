@@ -79,12 +79,14 @@ public class SparePanel extends JPanel implements ActionListener {
             spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
             l.setIcon(spareIcon);   // update spare icon
             add(l, BorderLayout.CENTER);
+            System.out.println("Spare= " +spare.type+"-"+spare.orientation);
         }
         if (Action.equals("rr")) { // rotate right pressed
             spare.rotateRight();
             spareIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/"+spare.type+"-"+spare.orientation+".png");
             l.setIcon(spareIcon);   // update spare icon
             add(l, BorderLayout.CENTER);
+            System.out.println("Spare= " +spare.type+"-"+spare.orientation);
         }
         
         

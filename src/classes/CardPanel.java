@@ -11,37 +11,38 @@ import java.util.ArrayList;
  */
 public class CardPanel extends JPanel {
     
-    Player currentPlayer;
+    String currentTreasure;
     JLabel currentCard;         // Label displaying user's current card
     ImageIcon treasure;         // Current treasure icon
     JLabel treasuresFound;      // Label containing user's earned treasures
     
-    public CardPanel(Player curr) {
+    public CardPanel(String curr) {
         
-        currentPlayer = curr;
+        currentTreasure = curr;
         
         setBackground(Color.DARK_GRAY); // set background
         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-        setPreferredSize(new Dimension(100,100));
+        setPreferredSize(new Dimension(75,75));
         setLayout(new FlowLayout(FlowLayout.CENTER));
         
-        initComponents();
+        setImage();
         
     }
     
-    void initComponents() {
+    public void setImage() {
         
-        treasure = new ImageIcon("<path to image of current treasure>");
-        currentCard = new JLabel(currentPlayer.currentTreasure, treasure, JLabel.CENTER);
+        // create treasure icon
+        treasure = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/" + currentTreasure.toLowerCase() + ".png");
+        currentCard = new JLabel("", treasure, JLabel.CENTER);
         
         add(currentCard);
         
     }
     
-    public void setCard(String card) {
+    public void setCurrentTreasure(String t) {
         
         // update current card
-        
+        currentTreasure = t;
     }
 
 }
