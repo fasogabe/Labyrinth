@@ -24,9 +24,9 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	// GUI components
 	public GameGrid gg;
 	public SparePanel sp;
-	public CardPanel ca;
-	JButton button1, button2, button3, button4, button5, button6, button7, button8, button9, button10, button11,
-			button12;
+	public CardPanel ca, st;
+	JButton button1, button2, button3, button4, button5, button6, 
+                button7, button8, button9, button10, button11, button12;
 
 	// Game variables
 	private boolean debug = false;
@@ -49,11 +49,11 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	volatile boolean usersGoalEntered = false;
 	volatile boolean insertLocEntered = false;
 	private int[] whereToMoveCP = new int[2];
-	String filePath = new File("").getAbsolutePath() + "/src";
+	static String filePath = new File("").getAbsolutePath() + "/src";
 	boolean doesPathExist;
 	boolean doesCpPathExist;
 
-	static ImageIcon labyIcon = new ImageIcon("/images/labyrinth_icon.png");
+	static ImageIcon labyIcon = new ImageIcon(filePath + "/images/labyrinth_icon.png");
 
 	public Labyrinth() {
 
@@ -224,7 +224,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 
 	private void initializePlayers() {
 		// get user input from a gui that pops up at the start maybe?
-		String player1Name = getPlayer1Name();
+		
 		ArrayList<String> halfDeck = new ArrayList();
 		for (int i = 0; i < deck.size() / 2; i++) {
 			halfDeck.add(deck.get(2 * i));
@@ -232,15 +232,14 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		for (int i = 0; i < halfDeck.size(); i++) {
 			deck.remove(halfDeck.get(i));
 		}
-		player1 = new Player(player1Name, "blue", 0, 6, halfDeck);
+		player1 = new Player("p1", "blue", 0, 6, halfDeck);
 		// user input to say, "do you want to play a cp or 1V1
 		playCP = whoToPlay();
 		if (playCP == true) {
 			player2 = new Player("CP", "green", 6, 0, deck);
 			player2.isCP = true;
-		} else {
-			String player2Name = getPlayer2Name();
-			player2 = new Player(player2Name, "green", 6, 0, deck);
+		} else {	
+			player2 = new Player("p2", "green", 6, 0, deck);
 		}
 		//
 	}
@@ -287,22 +286,29 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.gridy = 0;
 		gbc.insets = new Insets(0, 0, 0, 40);
 		getContentPane().add(button5, gbc);
-
+                
+                // CardPanel (for spare)
+                st = new CardPanel(spare.getTreasure());
+                gbc.gridheight = 2;
+                gbc.gridx = 9;
+                gbc.gridy = 0;
+                gbc.insets = new Insets(5, 5, 0, 5);
+                getContentPane().add(st, gbc);
 		// SparePanel
 		sp = new SparePanel(spare); // Create sparepanel object
 		gbc.gridheight = 4;
 		gbc.gridx = 9;
-		gbc.gridy = 2;
-		gbc.insets = new Insets(20, 20, 20, 20);
+		gbc.gridy = 1;
+		gbc.insets = new Insets(0,5,5,5);
 		getContentPane().add(sp, gbc);
 
 		// CardPanel
-		String currTreasure = getWhoseTurn().currentTreasure;
+		String currTreasure = player1.currentTreasure;
 		ca = new CardPanel(currTreasure); // Create cardpanel object
-		gbc.gridheight = 4;
+		gbc.gridheight = 3;
 		gbc.gridx = 9;
 		gbc.gridy = 4;
-		gbc.insets = new Insets(20, 20, 20, 20);
+		gbc.insets = new Insets(5, 5, 5, 5);
 		getContentPane().add(ca, gbc);
 
 		tri = new ImageIcon(filePath + "/images/right_triangle.png");
@@ -429,12 +435,12 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 
 		// Pack components
 		pack();
-
+                
+                // two methods below MUST be called after pack()
+                
 		// Display initial board setup
 		displayBoard();
-		// gg.addActor(player1, new Location(0,0));
-		// gg.doRun();
-
+                // Display initial spare in spare panel
 	}
 	// void addActors(){
 	// ggSp.addActor(spare, new Location(0,1));
@@ -481,19 +487,19 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 
 	}
 
-	public static String getPlayer1Name() {
-		// text box input
-		String name = (String) JOptionPane.showInputDialog(null, "Welcome to Labyrinth!\n\nEnter your name:", "",
-				JOptionPane.OK_OPTION, labyIcon, null, null);
-		return name;
-	}
-
-	public static String getPlayer2Name() {
-		// text box input
-		String name = (String) JOptionPane.showInputDialog(null, "Human #2, enter your name:", "",
-				JOptionPane.OK_OPTION, labyIcon, null, null);
-		return name;
-	}
+//	public static String getPlayer1Name() {
+//		// text box input
+//		String name = (String) JOptionPane.showInputDialog(null, "Welcome to Labyrinth!\n\nEnter your name:", "",
+//				JOptionPane.OK_OPTION, labyIcon, null, null);
+//		return name;
+//	}
+//
+//	public static String getPlayer2Name() {
+//		// text box input
+//		String name = (String) JOptionPane.showInputDialog(null, "Human #2, enter your name:", "",
+//				JOptionPane.OK_OPTION, labyIcon, null, null);
+//		return name;
+//	}
 
 	public static int[] convertToGuiLoc(int[] loc) {
 		int x = loc[0];
@@ -504,6 +510,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		return loc;
 	}
 
+        //////////////////////////////// NO LONGER NEEDED //////////////////////////////////////
 	public int[] getInsertLocation() {
 		Object[] numbers = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
 		String s = (String) JOptionPane.showInputDialog(this, "Choose your insert row or column:",
@@ -577,14 +584,18 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		// usersGoalEntered=false;
 		// return convertToGuiLoc(loc);
 	}
+        ///////////////// END OF NO LONGER NEEDED ////////////////////////////////////
 
+        
+        
+        
 	// ------------------- GAME PLAY METHODS
 	// -----------------------------------------------
 
 	// to change the turn
 	private void nextTurn() {
 
-		sp.setSpare(spare);
+		//setSpare();
 		// reset userGoal and insertLoc
 		usersGoal[0] = -1;
 		usersGoal[1] = -1;
@@ -597,11 +608,10 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 			tracker = true;
 		}
 
-		if (playCP) {
-			ca.setCurrentTreasure(player1.currentTreasure);
-		} else {
-			ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
-		}
+		
+                
+                ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+		
 	}
 
 	// to check whose turn it is
@@ -619,9 +629,22 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	public Piece getSpare() {
 		return spare;
 	}
-	// public void setSpare(Piece spare) {
-	// this.spare = spare;
-	// }
+    public void setSpare(Piece s) {
+        this.spare = s;
+    }
+//    
+//    private void setSpareIcon() {
+//        Location spareLoc = new Location(1,0);
+//        //spareIcon = new ImageIcon(filePath + "/sprites/"+spare.type+"-"+spare.orientation+".png");
+//        sp.removeActorsAt(spareLoc);
+//        sp.addActor(spare, spareLoc);
+//        if (!"null".equals(spare.treasure)) {
+//            sp.addActor(sp.spareTreasure, spareLoc);
+//        }
+//        //l.setIcon(spareIcon);
+//        //l.validate();   // update spare icon
+//        
+//    }
 
 	private void isTheGameOver() {
 		if (player1.cardsLeft == 0 || player2.cardsLeft == 0) {
@@ -992,7 +1015,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		if (!gameOver && usersGoalEntered) {
 			System.out.println("Next Turn");
 			nextTurn();
-			if(!player.isCP){
+			if(!player.isCP && playCP){
 				int[] empty = new int[2];
 				empty[0] = 0;
 				empty[1] = 0;
@@ -1077,15 +1100,16 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 				insertLoc[1] = 1;
 				break;
 			}
-			this.spare = sp.spare;
+			setSpare(sp.spare);     // get spare from sparePanel
 			System.out.println(Arrays.toString(insertLoc));
-			insertPiece(insertLoc);
-
+			insertPiece(insertLoc); // insert spare
+                        // shift players
 			shiftPlayerLocation(player1, insertLoc);
 			shiftPlayerLocation(player2, insertLoc);
 
-			sp.setSpare(spare);
-
+			sp.setSpare(getSpare());    // set new spare in sparePanel
+                        st.erasePanel();            // clear spare treasure
+                        st.setCurrentTreasure(spare.getTreasure());
 			displayBoard();
 
 			insertLocEntered = true;

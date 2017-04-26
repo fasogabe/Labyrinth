@@ -45,7 +45,7 @@ public class Piece extends Actor{
     }
 
     public String getTreasure() {
-        return treasure;
+        return treasure.toLowerCase();
     }
 
     public int[] getSpot() {

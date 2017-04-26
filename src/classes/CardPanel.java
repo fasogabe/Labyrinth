@@ -1,8 +1,10 @@
 
 package classes;
 
+import ch.aplu.jgamegrid.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -13,36 +15,38 @@ public class CardPanel extends JPanel {
     
     String currentTreasure;
     JLabel currentCard;         // Label displaying user's current card
-    ImageIcon treasure;         // Current treasure icon
-    JLabel treasuresFound;      // Label containing user's earned treasures
+    ImageIcon treasureIcon;         // Current treasure icon
     
-    public CardPanel(String curr) {
+    public CardPanel(String t) {
         
-        currentTreasure = curr;
+        currentTreasure = t;
         
         setBackground(Color.DARK_GRAY); // set background
         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-        setPreferredSize(new Dimension(75,75));
-        setLayout(new FlowLayout(FlowLayout.CENTER));
+        setPreferredSize(new Dimension(65,65));
+        setLayout(new FlowLayout(FlowLayout.CENTER,18,18));
         
         setImage();
         
     }
     
-    public void setImage() {
+    private void setImage() {
         
         // create treasure icon
-        treasure = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/" + currentTreasure.toLowerCase() + ".png");
-        currentCard = new JLabel("", treasure, JLabel.CENTER);
+        treasureIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/" + currentTreasure.toLowerCase() + ".png");
+        currentCard = new JLabel("", treasureIcon, JLabel.CENTER);
         
         add(currentCard);
         
     }
+    public void erasePanel() {
+        remove(currentCard);
+    }
     
     public void setCurrentTreasure(String t) {
-        
         // update current card
         currentTreasure = t;
+        setImage();
     }
 
 }
