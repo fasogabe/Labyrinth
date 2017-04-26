@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package labyrinth;
+package classes;
 
 import ch.aplu.jgamegrid.Actor;
 import ch.aplu.jgamegrid.Location;
@@ -48,7 +48,7 @@ public class Player extends Actor {
         location[0] = x;
         location[1] = y;
         this.setLocation(new Location(x,y));
-        
+
         
     }
     @Override
