@@ -21,7 +21,10 @@ public class SparePanel extends JPanel implements ActionListener {
     JButton rLeft, rRight;
     JLabel l;
     ImageIcon spareIcon, rlIcon, rrIcon;
-    String filePath = new File("").getAbsolutePath() + "/src";
+    // FOR JAR FILE
+	//String filePath = System.getProperty("user.dir");
+    
+        String filePath = new File("").getAbsolutePath() + "/src";
     /**
      * Constructor takes initial spare Piece as an argument
      * and instantiates all subcomponents

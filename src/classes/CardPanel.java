@@ -12,6 +12,11 @@ import java.util.ArrayList;
  */
 public class CardPanel extends JPanel {
     
+    // FOR JAR FILE
+	//String filePath = System.getProperty("user.dir");
+    
+    String filePath = new File("").getAbsolutePath() + "/src";
+    
     String currentTreasure;
     JLabel currentCard;         // Label displaying user's current card
     ImageIcon treasureIcon;         // Current treasure icon
@@ -23,7 +28,7 @@ public class CardPanel extends JPanel {
         setBackground(Color.DARK_GRAY); // set background
         setBorder(BorderFactory.createLineBorder(Color.YELLOW));
         setPreferredSize(new Dimension(65,65));
-        setLayout(new FlowLayout(FlowLayout.CENTER,18,18));
+        setLayout(new FlowLayout(FlowLayout.CENTER,18,10));
         
         setImage();
         
@@ -35,7 +40,7 @@ public class CardPanel extends JPanel {
         removeAll();
         
         // create treasure icon
-        treasureIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/" + currentTreasure.toLowerCase() + ".png");
+        treasureIcon = new ImageIcon(filePath + "/sprites/" + currentTreasure.toLowerCase() + ".png");
         currentCard = new JLabel("", treasureIcon, JLabel.CENTER);
         
         add(currentCard);

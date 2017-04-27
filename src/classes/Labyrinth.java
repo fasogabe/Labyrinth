@@ -58,7 +58,9 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 	volatile boolean usersGoalEntered = true;
 	volatile boolean insertLocEntered = false;
 	private int[] whereToMoveCP = new int[2];
-	static String filePath = new File("").getAbsolutePath() + "/src";
+        // FOR JAR FILE
+	//static String filePath = System.getProperty("user.dir");
+        static String filePath = new File("").getAbsolutePath() + "/src";
         // Booleans for whether a path exists or not
 	boolean doesPathExist;
 	boolean doesCpPathExist;
@@ -66,14 +68,15 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         boolean cpCanGetTreasure = false;
 
 	static ImageIcon labyIcon = new ImageIcon(filePath + "/images/labyrinth_icon.png");
-    static ImageIcon helpInsert = new ImageIcon(filePath+"/images/help_insert_location.png");
-    static ImageIcon helpMove = new ImageIcon(filePath+"/images/help_move.png");
+        static ImageIcon helpInsert = new ImageIcon(filePath+"/images/help_insert_location.png");
+        static ImageIcon helpMove = new ImageIcon(filePath+"/images/help_move.png");
+        
 	public Labyrinth() {
 		super("Labyrinth");
 		//Design the layout of the gamegrid
                 //setResizable(false);
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setPreferredSize(new Dimension(860, 560));
+		setPreferredSize(new Dimension(890, 576));
 		setContentPane(new JLabel(new ImageIcon(filePath + "/images/stone_background.png")));
 		setLayout(new GridBagLayout()); // set layout manager
 
@@ -276,7 +279,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                 //Location of the button
 		gbc.gridx = 2;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 40, 0, 0);
+		gbc.insets = new Insets(10, 40, 0, 0);
 		getContentPane().add(button1, gbc);
 
 		//Third insert button that is in the top middle of the gamegrid
@@ -288,7 +291,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.weightx = 0.5;
 		gbc.gridx = 4;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.insets = new Insets(10, 0, 0, 0);
 		getContentPane().add(button3, gbc);
 
 		//Fifth insert button that is in the top right of the gamegrid
@@ -300,30 +303,31 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.weightx = 0.5;
 		gbc.gridx = 6;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(0, 0, 0, 40);
+		gbc.insets = new Insets(10, 0, 0, 40);
 		getContentPane().add(button5, gbc);
                 
                 // CardPanel (for spare)
                 st = new CardPanel(spare.getTreasure());
-                gbc.gridheight = 2;
-                gbc.gridx = 9;
+                gbc.gridheight = 1;
+                gbc.gridx = 10;
                 gbc.gridy = 1;
                 gbc.insets = new Insets(5, 5, 0, 5);
                 getContentPane().add(st, gbc);
 		// SparePanel
 		sp = new SparePanel(spare); // Create sparepanel object
 		gbc.gridheight = 2;
+                gbc.gridwidth = 3;
 		gbc.gridx = 9;
 		gbc.gridy = 2;
-		gbc.insets = new Insets(0,5,0,5);
+		gbc.insets = new Insets(0,15,0,15);
 		getContentPane().add(sp, gbc);
-
 		// CardPanel
 		String currTreasure = player1.currentTreasure;
 		ca = new CardPanel(currTreasure); // Create cardpanel object
 		gbc.gridheight = 2;
+                gbc.gridheight = 1;
 		gbc.gridx = 9;
-		gbc.gridy = 3;
+		gbc.gridy = 6;
 		gbc.insets = new Insets(0, 5, 5, 5);
 		getContentPane().add(ca, gbc);
 
@@ -339,7 +343,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                 gbc.gridwidth = 1;
                 gbc.gridx = 9;
                 gbc.gridy = 6;
-                gbc.insets = new Insets(5,5,5,5);
+                gbc.insets = new Insets(5,10,5,5);
                 getContentPane().add(ggTf, gbc);
 
                 ggTf2 = new GameGrid();
@@ -352,7 +356,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                 gbc.gridwidth = 1;
                 gbc.gridx = 11;
                 gbc.gridy = 6;
-                gbc.insets = new Insets(5,5,5,5);
+                gbc.insets = new Insets(5,5,5,10);
                 getContentPane().add(ggTf2, gbc);
         
 		//Seventh insert button
@@ -365,7 +369,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.weighty = 0.5;
 		gbc.gridx = 0;
 		gbc.gridy = 2;
-		gbc.insets = new Insets(40, 0, 0, 0);
+		gbc.insets = new Insets(0, 10, 40, 0);
 		getContentPane().add(button7, gbc);
 
 		//Ninth insert button
@@ -377,7 +381,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.weighty = 0.5;
 		gbc.gridx = 0;
 		gbc.gridy = 4;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.insets = new Insets(20, 10, 0, 0);
 		getContentPane().add(button9, gbc);
 
 		//Eleventh insert button
@@ -389,7 +393,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.weighty = 0.5;
 		gbc.gridx = 0;
 		gbc.gridy = 6;
-		gbc.insets = new Insets(0, 0, 40, 0);
+		gbc.insets = new Insets(10, 10, 0, 0);
 		getContentPane().add(button11, gbc);
 
 		//GameGrid panel
@@ -417,7 +421,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		gbc.gridheight = 1;
 		gbc.gridx = 8;
 		gbc.gridy = 2;
-		gbc.insets = new Insets(40, 0, 0, 0);
+		gbc.insets = new Insets(0, 0, 40, 10);
 		getContentPane().add(button8, gbc);
 
 		//Tenth insert button
@@ -428,7 +432,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		button10.addActionListener(this);
 		gbc.gridx = 8;
 		gbc.gridy = 4;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.insets = new Insets(15, 0, 0, 10);
 		getContentPane().add(button10, gbc);
 
 		//Twelfth insert button
@@ -439,7 +443,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		button12.addActionListener(this);
 		gbc.gridx = 8;
 		gbc.gridy = 6;
-		gbc.insets = new Insets(0, 0, 40, 0);
+		gbc.insets = new Insets(10, 0, 0, 10);
 		getContentPane().add(button12, gbc);
 
 		tri = new ImageIcon(filePath + "/images/up_triangle.png");
@@ -451,7 +455,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		button2.addActionListener(this);
 		gbc.gridx = 2;
 		gbc.gridy = 8;
-		gbc.insets = new Insets(0, 40, 0, 0);
+		gbc.insets = new Insets(0, 40, 10, 0);
 		getContentPane().add(button2, gbc);
 
 		//Fourth insert button
@@ -462,7 +466,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		button4.addActionListener(this);
 		gbc.gridx = 4;
 		gbc.gridy = 8;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.insets = new Insets(0, 0, 10, 0);
 		getContentPane().add(button4, gbc);
 
 		//Sixth insert button
@@ -473,10 +477,10 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		button6.addActionListener(this);
 		gbc.gridx = 6;
 		gbc.gridy = 8;
-		gbc.insets = new Insets(0, 0, 0, 40);
+		gbc.insets = new Insets(0, 0, 10, 40);
 		getContentPane().add(button6, gbc);
 
-        help = new JButton(new AbstractAction("Help") {
+        help = new JButton(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                     System.out.println(insertLocEntered);
@@ -511,10 +515,11 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         }){
             
         };
-
+        help.setIcon( new ImageIcon(filePath + "/images/help_icon.png"));
+        help.setBorder(null);
         gbc.anchor = GridBagConstraints.NORTHEAST;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.gridx = 10;
+        gbc.insets = new Insets(2, 2, 0, 0);
+        gbc.gridx = 11;
         gbc.gridy= 0;
         getContentPane().add(help, gbc);
         
@@ -596,9 +601,13 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 			tracker = true;
 		}
 
-		
-                
                 ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+                
+                if (!playCP) {
+                    JOptionPane.showMessageDialog(new Frame(), "Time to switch players! Let the other\n"
+                                                            + "person see the screen and no peeking! ", "Next Player's turn",
+                                                            JOptionPane.DEFAULT_OPTION, labyIcon);
+                }
 	}
 
 	//Check whose turn it is
