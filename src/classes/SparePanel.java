@@ -10,7 +10,9 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
 /**
- *
+ * SparePanel class is a JPanel which displays the current
+ * spare piece and allows user to rotate the spare right or
+ * left by using JButtons.
  * @author Fasogabe
  */
 public class SparePanel extends JPanel implements ActionListener {
@@ -20,38 +22,47 @@ public class SparePanel extends JPanel implements ActionListener {
     JLabel l;
     ImageIcon spareIcon, rlIcon, rrIcon;
     String filePath = new File("").getAbsolutePath() + "/src";
-    
-    
+    /**
+     * Constructor takes initial spare Piece as an argument
+     * and instantiates all subcomponents
+     * @param spare
+     */
     public SparePanel(Piece spare) {
         
-        this.spare = spare;             // set local spare Piece object
+        this.spare = spare; // set local spare Piece object
         
-        setBackground(Color.DARK_GRAY); // set background
-        setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-        setPreferredSize(new Dimension(250,100));
-        setLayout(new FlowLayout(FlowLayout.CENTER, 25, 18));
+        setBackground(Color.DARK_GRAY);                         // set background
+        setBorder(BorderFactory.createLineBorder(Color.YELLOW));// set border
+        setPreferredSize(new Dimension(250,100));               // set size
+        setLayout(new FlowLayout(FlowLayout.CENTER, 25, 18));   // set layout
         
-        initComponents();               // initialize components
+        initComponents();   // initialize components
 
     }
     
     public Piece getSpare() {
         return spare;
     }
+
+    /**
+     * setSpare method is used by main class
+     * to reset the spare piece appropriately
+     * after each insertion
+     * @param spare The new spare Piece object
+     */
     public void setSpare(Piece spare) {
         this.spare = spare;
         setSpareIcon();
     }
     
     private void setSpareIcon() {
+        
         spareIcon = new ImageIcon(filePath + "/sprites/"+spare.type+"-"+spare.orientation+".png");
-        l.setIcon(spareIcon);   // update spare icon
-        l.validate();
+        l.setIcon(spareIcon);
+        l.validate();   // update spare icon
         
     }
 
-    
-    
     private void initComponents() {
         
         // create spare icon label

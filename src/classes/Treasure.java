@@ -18,6 +18,11 @@ public class Treasure extends Actor {
 
 
     }
+    public Treasure(String type, boolean tiny){
+        super(true, "sprites/tiny_"+type.toLowerCase()+".png");
+    
+    
+    }
     
     
 }

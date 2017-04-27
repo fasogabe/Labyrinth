@@ -1,7 +1,6 @@
 
 package classes;
 
-import ch.aplu.jgamegrid.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -28,9 +27,12 @@ public class CardPanel extends JPanel {
         
         setImage();
         
+        
     }
     
     private void setImage() {
+        
+        removeAll();
         
         // create treasure icon
         treasureIcon = new ImageIcon("/Users/Fasogabe/NetBeansProjects/Labyrinth/src/sprites/" + currentTreasure.toLowerCase() + ".png");
@@ -38,9 +40,6 @@ public class CardPanel extends JPanel {
         
         add(currentCard);
         
-    }
-    public void erasePanel() {
-        remove(currentCard);
     }
     
     public void setCurrentTreasure(String t) {
