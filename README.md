@@ -1,1 +1,3 @@
 # Labyrinth
+
+See README.txt

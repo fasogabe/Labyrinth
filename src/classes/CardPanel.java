@@ -37,7 +37,7 @@ public class CardPanel extends JPanel {
     
     private void setImage() {
         
-        removeAll();
+        
         
         // create treasure icon
         treasureIcon = new ImageIcon(filePath + "/sprites/" + currentTreasure.toLowerCase() + ".png");
@@ -48,9 +48,13 @@ public class CardPanel extends JPanel {
     }
     
     public void setCurrentTreasure(String t) {
+        removeIcon();
         // update current card
         currentTreasure = t;
         setImage();
     }
-
+    public void removeIcon() {
+        removeAll();
+    }
+    
 }

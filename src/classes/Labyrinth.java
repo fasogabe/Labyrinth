@@ -483,7 +483,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         help = new JButton(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    System.out.println(insertLocEntered);
+                    
                     if (!insertLocEntered){
                         JOptionPane.showMessageDialog(new JFrame(),
                                 "You need to pick a place to insert\n"
@@ -601,13 +601,20 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 			tracker = true;
 		}
 
-                ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+                //ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+                
                 
                 if (!playCP) {
                     JOptionPane.showMessageDialog(new Frame(), "Time to switch players! Let the other\n"
                                                             + "person see the screen and no peeking! ", "Next Player's turn",
                                                             JOptionPane.DEFAULT_OPTION, labyIcon);
                 }
+                
+                ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
+                st.setCurrentTreasure(getSpare().getTreasure());
+                displayBoard();
+                
+                
 	}
 
 	//Check whose turn it is
@@ -735,8 +742,10 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		Location position = player.getLocation();
 		int x = position.x;
 		int y = position.y;
+                String playerCard = player.getCurrentCard().toLowerCase();
+                String boardCard = board[x][y].getTreasure().toLowerCase();
 		//If the piece the player is on has the treasure they need, return true
-		return board[x][y].getTreasure().equals(player.getCurrentCard());
+		return playerCard.equals(boardCard);
 	}
 
 	//Method updates board and new spare piece
@@ -1095,13 +1104,13 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                                 insertPiece(cpInsertsHere);
 				player.updateLocation(moveX, moveY);
 			} else {
-                        System.out.println("Cannot Get Treasure");
+                        
                         //Random location for the CP to insert piece
                         Random rand = new Random();
                         int randomInt = rand.nextInt(6);
                         int[] cpInsert = new int[2];
                         if(randomInt==0){
-                            System.out.println("Hello");
+                            
                             cpInsert[0]=0;
                             cpInsert[1]=1;
                             insertPiece(cpInsert);
@@ -1160,9 +1169,9 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		//If path exists move the player to the piece
 		//Then check for treasure for that player
 		if (checkForTreasure(player) == true) {
-			System.out.println("You found treasure");
+			
             if (player == player1){
-//            gg.removeActors(Treasure.class);
+
             gg.removeActorsAt(player.getLocation());
             player.treasuresFound.add(player.getCurrentCard());
             String treasureType = player.currentTreasure;
@@ -1171,7 +1180,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 			player.flipCard();
 		}
             else if (player == player2){
-//            gg.removeActors(Treasure.class);
+
             gg.removeActorsAt(player.getLocation());
             player.treasuresFound.add(player.getCurrentCard());
             String treasureType = player.currentTreasure;
@@ -1189,7 +1198,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		//Just to go through one round when debug is set to true so while loop
 		//Can end
 		if (!gameOver && usersGoalEntered) {
-			System.out.println("Next Turn");
+			
 			nextTurn();
 			if(!player.isCP && playCP){
 				int[] empty = new int[2];
@@ -1206,7 +1215,7 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 		if (!insertLocEntered) {
                         //If the radio button is pushed for each column/row, insert piece
 			String Action = e.getActionCommand();
-			System.out.println(Action);
+			
 			switch (Action) {
 			case "1":
 				insertLoc[0] = 1;
@@ -1258,8 +1267,8 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 				break;
 			}
 			setSpare(sp.spare);     // get spare from sparePanel
-			System.out.println(Arrays.toString(insertLoc));
-			insertPiece(insertLoc);
+			
+			insertPiece(insertLoc); // Insert the piece
                         
                         //Shift the player location if the piece shifts the board
 			shiftPlayerLocation(player1, insertLoc);
@@ -1269,8 +1278,15 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
                         ca.setCurrentTreasure(getWhoseTurn().currentTreasure);
 
 			sp.setSpare(getSpare());    // set new spare in sparePanel
-                        st.setCurrentTreasure(spare.getTreasure());
+                        st.removeIcon();
+                        
+                        if (getSpare().getTreasure().equals("null")) {
+                            st.setCurrentTreasure("null");
+                        } else {
+                            st.setCurrentTreasure(getSpare().getTreasure());
+                        }
 			displayBoard();
+                        
 
 			insertLocEntered = true;
 			usersGoalEntered = false;
