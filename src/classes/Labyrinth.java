@@ -71,6 +71,8 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
         static ImageIcon helpInsert = new ImageIcon(filePath+"/images/help_insert_location.png");
         static ImageIcon helpMove = new ImageIcon(filePath+"/images/help_move.png");
         
+        
+        
 	public Labyrinth() {
 		super("Labyrinth");
 		//Design the layout of the gamegrid
@@ -1206,7 +1208,15 @@ public class Labyrinth extends JFrame implements ActionListener, GGMouseListener
 				empty[1] = 0;
 				playGame(empty);
 			}
-		}
+		} 
+                if (gameOver && player == player1) {
+                    gg.playSound(filePath + "/wav/airhorn.wav");
+                    JOptionPane.showMessageDialog(this, "Player 1 has won the game! Congrats!","Victory!",JOptionPane.DEFAULT_OPTION,labyIcon);
+                }
+                if (gameOver && player == player2) {
+                    gg.playSound(filePath + "/wav/airhorn.wav");
+                    JOptionPane.showMessageDialog(this, "Player 2 has won the game! Congrats!","Victory!",JOptionPane.DEFAULT_OPTION,labyIcon); 
+                }
 	}
 	//-------------Action Listeners-----------------
         //Insert Piece into column/row listener
